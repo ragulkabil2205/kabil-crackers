@@ -114,7 +114,7 @@ reviewsData: [
 
     featured: true,
     bestseller: true,
-    inStock: true,
+    inStock: false,
 
     rating: 4.9,
     reviews: 223,

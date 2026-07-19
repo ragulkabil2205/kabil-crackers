@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import { useOrders } from "../context/OrdersContext";
 
 function Checkout() {
   const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
+const { addOrder } = useOrders();
+
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -81,6 +84,27 @@ ${orderDetails}
 
 Thank you! 😊
 `;
+
+const order = {
+  id: Date.now(),
+  customer: formData.name,
+  phone: formData.phone,
+  address: formData.address,
+  city: formData.city,
+  pincode: formData.pincode,
+
+  payment: formData.payment,
+
+  items: cartItems,
+
+  total: totalPrice,
+
+  status: "Pending",
+
+  orderDate: new Date().toLocaleString(),
+};
+
+addOrder(order);
 
     const whatsappUrl = `https://wa.me/918428902102?text=${encodeURIComponent(
       message
