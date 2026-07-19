@@ -16,6 +16,7 @@ import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import Dashboard from "./pages/Admin/Dashboard";
 import Products from "./pages/Admin/Products";
 import Orders from "./pages/Admin/Orders";
+import MigrateProducts from "./pages/Admin/MigrateProducts";
 
 function App() {
   return (
@@ -56,6 +57,10 @@ function App() {
         <Route
   path="/admin/login"
   element={<Login />}
+/>
+<Route
+  path="/admin/migrate"
+  element={<MigrateProducts />}
 />
       </Routes>
        <FloatingWhatsApp />
