@@ -1,7 +1,7 @@
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Admin/Login";
 import { Routes, Route } from "react-router-dom";
-
+import Layout from "./components/layout/Layout";
 
 import Home from "./pages/Home";
 import ProductsPage from "./pages/ProductsPage";
@@ -20,7 +20,7 @@ import MigrateProducts from "./pages/Admin/MigrateProducts";
 
 function App() {
   return (
-    <layout>
+    <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<ProductsPage />} />
@@ -65,7 +65,7 @@ function App() {
 />
       </Routes>
        <FloatingWhatsApp />
-       </layout>
+    </Layout>
   );
 }
 

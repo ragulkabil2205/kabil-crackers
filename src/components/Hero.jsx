@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 function Hero() {
   return (
-    <section className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-900 to-black flex items-center justify-center">
+    <section className="min-h-[calc(100vh-80px)] pt-24 md:pt-28 bg-gradient-to-b from-blue-950 via-blue-900 to-black flex items-center justify-center">
       <div className="text-center px-6">
 
         <motion.div
@@ -14,7 +14,7 @@ function Hero() {
           <img
             src="/images/logo/logo.jpeg"
             alt="Kabil Crackers Logo"
-            className="w-72 md:w-96 object-contain mb-8"
+            className="w-56 sm:w-64 md:w-96 object-contain mb-8"
           />
         </motion.div>
 

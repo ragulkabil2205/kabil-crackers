@@ -1,13 +1,17 @@
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   FaShoppingCart,
   FaHeart,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
+
+//import { useCart } from "../context/CartContext";
+//import { useWishlist } from "../context/WishlistContext";
+
 
 function Navbar() {
   const { cartItems } = useCart();
@@ -17,25 +21,25 @@ function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-blue-950 shadow-lg">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4 w-full">
 
         {/* Logo */}
         <Link
-  to="/"
-  className="flex items-center gap-2 flex-1 min-w-0"
->
-         <img
-  src="/images/logo/logo.jpeg"
-  alt="Logo"
-  className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
-/>
+          to="/"
+          className="flex items-center gap-3"
+        >
+          <img
+            src="/images/logo/logo.jpeg"
+            alt="Logo"
+            className="w-8 h-8 md:w-14 md:h-14 rounded-full object-cover"
+          />
 
           <div>
-            <h1 className="text-base sm:text-lg md:text-3xl font-bold text-yellow-400">
+            <h1 className="text-sm sm:text-base md:text-3xl font-bold text-yellow-400 whitespace-nowrap">
               Kabil Crackers
             </h1>
 
-            <p className="hidden sm:block text-xs text-white">
+            <p className="hidden md:block text-xs text-white">
               Premium Sivakasi Fireworks
             </p>
           </div>
@@ -43,37 +47,64 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex gap-8 text-white font-medium">
-          <Link to="/">Home</Link>
-          <Link to="/products">Products</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/" className="hover:text-yellow-400">
+            Home
+          </Link>
+
+          <Link
+            to="/products"
+            className="hover:text-yellow-400"
+          >
+            Products
+          </Link>
+
+          <Link
+            to="/contact"
+            className="hover:text-yellow-400"
+          >
+            Contact
+          </Link>
 
           <a
             href="/pdf/Kabil-Crackers-Catalog.pdf"
             target="_blank"
             rel="noreferrer"
+            className="hover:text-yellow-400"
           >
             Catalog
           </a>
         </nav>
 
         {/* Desktop Icons */}
-        <div className="hidden md:flex items-center gap-5 text-white">
+        <div className="flex items-center gap-5 text-white">
 
-          <Link to="/wishlist" className="relative">
-            <FaHeart size={22} />
+          <Link
+            to="/wishlist"
+            className="relative"
+          >
+            <FaHeart
+              size={22}
+              className="hover:text-pink-400"
+            />
 
             {wishlistItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-pink-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {wishlistItems.length}
               </span>
             )}
           </Link>
 
-          <Link to="/cart" className="relative">
-            <FaShoppingCart size={22} />
+          <Link
+            to="/cart"
+            className="relative"
+          >
+            <FaShoppingCart
+              size={22}
+              className="hover:text-yellow-400"
+            />
 
             {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
@@ -82,23 +113,29 @@ function Navbar() {
         </div>
 
         {/* Mobile Right */}
-        <div className="md:hidden flex items-center gap-3 shrink-0">
+        <div className="flex md:hidden items-center gap-3 shrink-0">
 
-          <Link to="/wishlist" className="relative text-white">
-            <FaHeart size={22} />
+          <Link
+            to="/wishlist"
+            className="relative text-white"
+          >
+            <FaHeart size={20} />
 
             {wishlistItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-pink-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {wishlistItems.length}
               </span>
             )}
           </Link>
 
-          <Link to="/cart" className="relative text-white">
-            <FaShoppingCart size={22} />
+          <Link
+            to="/cart"
+            className="relative text-white"
+          >
+            <FaShoppingCart size={20} />
 
             {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
@@ -109,19 +146,18 @@ function Navbar() {
             className="text-white"
           >
             {menuOpen ? (
-              <FaTimes size={24} />
+              <FaTimes size={22} />
             ) : (
-              <FaBars size={24} />
+              <FaBars size={22} />
             )}
           </button>
 
         </div>
-
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-blue-900 text-white px-6 py-4 space-y-4">
+        <div className="md:hidden bg-blue-900 px-6 py-5 space-y-4 text-white">
 
           <Link
             to="/"
@@ -151,8 +187,8 @@ function Navbar() {
             href="/pdf/Kabil-Crackers-Catalog.pdf"
             target="_blank"
             rel="noreferrer"
-            className="block"
             onClick={() => setMenuOpen(false)}
+            className="block"
           >
             Catalog
           </a>
