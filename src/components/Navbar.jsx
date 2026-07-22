@@ -20,7 +20,17 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-blue-950 shadow-lg">
+    <header
+  style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    background: "red",
+    zIndex: 999999,
+    padding: "20px",
+  }}
+>
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4 w-full">
 
         {/* Logo */}
