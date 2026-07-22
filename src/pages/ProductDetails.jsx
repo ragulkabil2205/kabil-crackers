@@ -3,19 +3,20 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 
-import products from "../data/products";
+import { useProducts } from "../context/ProductsContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 
 function ProductDetails() {
   const { id } = useParams();
+  const { products } = useProducts();
 
   const { addToCart } = useCart();
   const { addToWishlist } = useWishlist();
 
   const product = products.find(
-    (item) => item.id === Number(id)
-  );
+  (item) => item.id === id
+);
 
   if (!product) {
     return (
@@ -163,11 +164,17 @@ function ProductDetails() {
               ⭐ {product.rating} ({product.reviews} Reviews)
             </p>
 
-            <p className="text-green-400 font-semibold">
-              {product.inStock
-                ? "🟢 In Stock"
-                : "🔴 Out of Stock"}
-            </p>
+            <p
+  className={`font-semibold ${
+    Number(product.stock || 0) > 0
+      ? "text-green-400"
+      : "text-red-500"
+  }`}
+>
+  {Number(product.stock || 0) > 0
+    ? `🟢 ${product.stock} Available`
+    : "🔴 Out of Stock"}
+</p>
 
             <div className="inline-block bg-red-600 text-white px-4 py-2 rounded-full font-bold">
               🔥 90% OFF

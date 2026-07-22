@@ -13,6 +13,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import { ProductsProvider } from "./context/ProductsContext";
 import { ToastProvider } from "./context/ToastContext";
 import { OrdersProvider } from "./context/OrdersContext";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,6 +25,17 @@ createRoot(document.getElementById("root")).render(
       <CartProvider>
         <BrowserRouter>
           <App />
+          <Toaster
+  position="top-right"
+  toastOptions={{
+    duration: 4000,
+    style: {
+      background: "#1e3a8a",
+      color: "#fff",
+      borderRadius: "12px",
+    },
+  }}
+/>
         </BrowserRouter>
       </CartProvider>
     </WishlistProvider>

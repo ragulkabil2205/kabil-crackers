@@ -2,11 +2,15 @@ import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { useOrders } from "../context/OrdersContext";
+import { useProducts } from "../context/ProductsContext";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 function Checkout() {
   const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
 const { addOrder } = useOrders();
+const { reduceStock } = useProducts();
 
 
   const totalPrice = cartItems.reduce(
@@ -30,7 +34,7 @@ const totalSaved = totalMRP - totalPrice;
     payment: "Cash on Delivery",
   });
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (
       !formData.name ||
       !formData.phone ||
@@ -104,7 +108,12 @@ const order = {
   orderDate: new Date().toLocaleString(),
 };
 
+await addDoc(collection(db, "orders"), order);
 addOrder(order);
+
+for (const item of cartItems) {
+  await reduceStock(item.id, item.quantity);
+}
 
     const whatsappUrl = `https://wa.me/918428902102?text=${encodeURIComponent(
       message

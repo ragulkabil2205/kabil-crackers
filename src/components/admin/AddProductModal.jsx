@@ -14,32 +14,41 @@ const [formData, setFormData] = useState({
   name: "",
   category: "",
   price: "",
+  originalPrice: "",
+  stock: "",
+  description: "",
   rating: "",
   image: "",
-  inStock: true,
   bestseller: false,
 });
+
 useEffect(() => {
-  if (editProduct) {
-    setFormData({
-      name: editProduct.name,
-      category: editProduct.category,
-      price: editProduct.price,
-      rating: editProduct.rating,
-      image: editProduct.image,
-      inStock: editProduct.inStock,
-      bestseller: editProduct.bestseller,
-    });
-  } else {
-    setFormData({
-      name: "",
-      category: "",
-      price: "",
-      rating: "",
-      image: "",
-      inStock: true,
-      bestseller: false,
-    });
+if (editProduct) {
+  setFormData({
+    name: editProduct.name || "",
+    category: editProduct.category || "",
+    price: editProduct.price || "",
+    originalPrice: editProduct.originalPrice || "",
+    stock: editProduct.stock || "",
+    description: editProduct.description || "",
+    rating: editProduct.rating || "",
+    image: editProduct.image || "",
+    bestseller: editProduct.bestseller || false,
+  });
+}
+  else {
+setFormData({
+  name: "",
+  category: "",
+  price: "",
+  originalPrice: "",
+  stock: "",
+  description: "",
+  rating: "",
+  image: "",
+  bestseller: false,
+});
+
   }
 }, [editProduct]);
 const handleChange = (e) => {
@@ -51,25 +60,33 @@ const handleChange = (e) => {
   }));
 };
 const handleSave = () => {
+  console.log("EDIT PRODUCT =>", editProduct);
+  console.log(editProduct);
   if (
-    !formData.name ||
-    !formData.category ||
-    !formData.price
-  ) {
-    alert("Please fill all required fields.");
-    return;
-  }
+  !formData.name ||
+  !formData.category ||
+  !formData.price ||
+  !formData.originalPrice ||
+  !formData.stock ||
+  !formData.description
+) {
+  alert("Please fill all required fields.");
+  return;
+}
 
-  const productData = {
-    id: editProduct ? editProduct.id : Date.now(),
-    name: formData.name,
-    category: formData.category,
-    price: Number(formData.price),
-    rating: Number(formData.rating),
-    image: formData.image,
-    inStock: formData.inStock,
-    bestseller: formData.bestseller,
-  };
+const productData = {
+  ...(editProduct && { id: editProduct.id }),
+
+  name: formData.name,
+  category: formData.category,
+  price: Number(formData.price),
+  originalPrice: Number(formData.originalPrice),
+  stock: Number(formData.stock),
+  description: formData.description,
+  rating: Number(formData.rating),
+  image: formData.image,
+  bestseller: formData.bestseller,
+};
 
   if (editProduct) {
     updateProduct(productData);
@@ -82,15 +99,17 @@ const handleSave = () => {
   setTimeout(() => {
     setShowToast(false);
 
-    setFormData({
-      name: "",
-      category: "",
-      price: "",
-      rating: "",
-      image: "",
-      inStock: true,
-      bestseller: false,
-    });
+   setFormData({
+  name: "",
+  category: "",
+  price: "",
+  originalPrice: "",
+  stock: "",
+  description: "",
+  rating: "",
+  image: "",
+  bestseller: false,
+});
 
     onClose();
   }, 2000);
@@ -145,6 +164,25 @@ const handleSave = () => {
   className="border rounded-xl p-3"
 />
 
+<input
+  type="number"
+  name="originalPrice"
+  value={formData.originalPrice}
+  onChange={handleChange}
+  placeholder="Original Price"
+  className="border rounded-xl p-3"
+/>
+
+<input
+  type="number"
+  name="stock"
+  value={formData.stock}
+  onChange={handleChange}
+  placeholder="Stock Quantity"
+  className="border rounded-xl p-3"
+/>
+
+
 
           <input
   type="number"
@@ -154,6 +192,15 @@ const handleSave = () => {
   onChange={handleChange}
   placeholder="Rating"
   className="border rounded-xl p-3"
+/>
+
+<textarea
+  name="description"
+  value={formData.description}
+  onChange={handleChange}
+  placeholder="Product Description"
+  rows={4}
+  className="border rounded-xl p-3 col-span-2 resize-none"
 />
 
        <div className="col-span-2">
@@ -213,18 +260,7 @@ onChange={(e) => {
 
 <div className="col-span-2 flex gap-8">
 
-  <label className="flex items-center gap-2">
 
-    <input
-      type="checkbox"
-      name="inStock"
-      checked={formData.inStock}
-      onChange={handleChange}
-    />
-
-    In Stock
-
-  </label>
 
   <label className="flex items-center gap-2">
 
@@ -264,7 +300,9 @@ onChange={(e) => {
       </div>
       {showToast && (
   <div className="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] animate-pulse">
-    ✅ Product Added Successfully
+  {editProduct
+  ? "✅ Product Updated Successfully"
+  : "✅ Product Added Successfully"}
   </div>
 )}
 

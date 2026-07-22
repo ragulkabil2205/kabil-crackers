@@ -3,18 +3,34 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { useProducts } from "../../context/ProductsContext";
 
+import { useNavigate } from "react-router-dom";
+import NewOrderNotification from "../../components/admin/NewOrderNotification";
+
 function Dashboard() {
+  
 
   const { products } = useProducts();
+  const navigate = useNavigate();
+
+  const totalQuantity = products.reduce(
+  (sum, product) => sum + (Number(product.stock) || 0),
+  0
+);
+
+const lowStockProducts = products.filter(
+  (product) =>
+    Number(product.stock) > 0 &&
+    Number(product.stock) <= 10
+).length;
+
+const outOfStockProducts = products.filter(
+  (product) => Number(product.stock) === 0
+).length;
 
     const totalProducts = products.length;
 
     const bestSellers = products.filter(
   (item) => item.bestseller
-).length;
-
-const outOfStock = products.filter(
-  (item) => !item.inStock
 ).length;
 
 const totalCategories = new Set(
@@ -37,6 +53,15 @@ const totalRevenue = orders
   .filter((order) => order.status === "Delivered")
   .reduce((sum, order) => sum + order.total, 0);
 
+  const latestOrder =
+  orders.length > 0
+    ? [...orders].sort(
+        (a, b) =>
+          new Date(b.orderDate) -
+          new Date(a.orderDate)
+      )[0]
+    : null;
+
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
@@ -46,6 +71,10 @@ const totalRevenue = orders
       <div className="flex-1">
 
         <Topbar />
+
+        <NewOrderNotification
+  latestOrder={latestOrder}
+/>
 
         <div className="p-8">
 
@@ -59,7 +88,10 @@ const totalRevenue = orders
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mt-10">
 
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+           <div
+  onClick={() => navigate("/admin/products?filter=all")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
               <h3 className="text-gray-500">Total Products</h3>
               <p className="text-4xl font-bold mt-3 text-blue-600">
                 {totalProducts}
@@ -69,7 +101,10 @@ const totalRevenue = orders
   View All →
 </p>
             </div>
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+            <div
+  onClick={() => navigate("/admin/orders")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
   <h3 className="text-gray-500">Total Orders</h3>
 
   <p className="text-4xl font-bold mt-3 text-green-600">
@@ -81,7 +116,10 @@ const totalRevenue = orders
   </p>
 </div>
 
-<div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+<div
+  onClick={() => navigate("/admin/orders")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
   <h3 className="text-gray-500">Pending Orders</h3>
 
   <p className="text-4xl font-bold mt-3 text-yellow-500">
@@ -93,7 +131,10 @@ const totalRevenue = orders
   </p>
 </div>
 
-<div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+<div
+  onClick={() => navigate("/admin/orders")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
   <h3 className="text-gray-500">Delivered Orders</h3>
 
   <p className="text-4xl font-bold mt-3 text-green-600">
@@ -105,7 +146,10 @@ const totalRevenue = orders
   </p>
 </div>
 
-<div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+<div
+  onClick={() => alert("Revenue Reports Coming Soon")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
   <h3 className="text-gray-500">Revenue</h3>
 
   <p className="text-4xl font-bold mt-3 text-purple-600">
@@ -118,7 +162,10 @@ const totalRevenue = orders
 </div>
 
 
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+           <div
+  onClick={() => navigate("/admin/products?filter=bestseller")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
               <h3 className="text-gray-500">Best Sellers</h3>
               <p className="text-4xl font-bold mt-3 text-green-600">
                 {bestSellers}
@@ -128,11 +175,15 @@ const totalRevenue = orders
 </p>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+            <div
+  onClick={() => navigate("/admin/products?filter=outofstock")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
               <h3 className="text-gray-500">Out of Stock</h3>
               <p className="text-4xl font-bold mt-3 text-red-600">
-  {outOfStock}
+  {outOfStockProducts}
 </p>
+
 <p className="text-sm text-red-600 mt-4 font-semibold">
   Restock Products →
 </p>
@@ -140,7 +191,10 @@ const totalRevenue = orders
 
             
 
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6">
+            <div
+  onClick={() => alert("Coming Soon")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
               <h3 className="text-gray-500">Categories</h3>
               <p className="text-4xl font-bold mt-3 text-yellow-500">
   {totalCategories}
@@ -149,6 +203,47 @@ const totalRevenue = orders
   Manage Categories →
 </p>
             </div>
+
+            <div
+  onClick={() => navigate("/admin/products")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
+  <h3 className="text-gray-500">Total Quantity</h3>
+
+  <p className="text-4xl font-bold mt-3 text-green-600">
+    {totalQuantity}
+  </p>
+
+  <p className="text-sm text-green-600 mt-4 font-semibold">
+    Available Units
+  </p>
+</div>
+
+<div
+  onClick={() => navigate("/admin/products?filter=lowstock")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+>
+  <h3 className="text-gray-500">Low Stock</h3>
+
+  <p className="text-4xl font-bold mt-3 text-orange-500">
+    {lowStockProducts}
+  </p>
+
+  <p className="text-sm text-orange-500 mt-4 font-semibold">
+    Need Restock
+  </p>
+</div>
+
+<div className="mt-10">
+
+  <button
+    onClick={() => navigate("/admin/sales")}
+    className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-lg transition"
+  >
+    📊 Open Sales Analytics
+  </button>
+
+</div>
 
         
 
@@ -160,29 +255,9 @@ const totalRevenue = orders
 
     </div>
   );
-  <div className="mt-12">
 
-  <h2 className="text-2xl font-bold text-gray-800 mb-6">
-    Quick Actions
-  </h2>
 
-  <div className="grid md:grid-cols-3 gap-6">
 
-    <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-6 text-xl font-bold transition">
-      ➕ Add Product
-    </button>
-
-    <button className="bg-green-600 hover:bg-green-700 text-white rounded-2xl p-6 text-xl font-bold transition">
-      📦 Manage Products
-    </button>
-
-    <button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl p-6 text-xl font-bold transition">
-      ❌ Out Of Stock
-    </button>
-
-  </div>
-
-</div>
 }
 
 export default Dashboard;

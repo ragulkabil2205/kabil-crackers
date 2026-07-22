@@ -2,13 +2,20 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { useProducts } from "../../context/ProductsContext";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AddProductModal from "../../components/admin/AddProductModal";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
 
 function Products() {
-  const { products, deleteProduct } = useProducts();
+  const {
+  products,
+  deleteProduct,
+  updateProduct,
+} = useProducts();
 const [searchTerm, setSearchTerm] = useState("");
 const [selectedCategory, setSelectedCategory] = useState("All");
+const [searchParams] = useSearchParams();
+const dashboardFilter = searchParams.get("filter");
 const [currentPage, setCurrentPage] = useState(1);
 const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -31,7 +38,27 @@ const filteredProducts = products.filter((product) => {
     selectedCategory === "All" ||
     product.category === selectedCategory;
 
-  return matchesSearch && matchesCategory;
+  let matchesDashboardFilter = true;
+
+  if (dashboardFilter === "bestseller") {
+    matchesDashboardFilter = product.bestseller === true;
+  }
+
+  if (dashboardFilter === "outofstock") {
+    matchesDashboardFilter = Number(product.stock) === 0;
+  }
+
+  if (dashboardFilter === "lowstock") {
+    matchesDashboardFilter =
+      Number(product.stock) > 0 &&
+      Number(product.stock) <= 10;
+  }
+
+  return (
+    matchesSearch &&
+    matchesCategory &&
+    matchesDashboardFilter
+  );
 });
 const categories = [
   "All",
@@ -70,7 +97,25 @@ const handleEdit = (product) => {
   setEditingProduct(product);
   setIsModalOpen(true);
 };
+const handleRestock = (product) => {
+  const qty = prompt(
+    `Enter quantity to add for ${product.name}`
+  );
 
+  if (!qty) return;
+
+  const quantity = Number(qty);
+
+  if (isNaN(quantity) || quantity <= 0) {
+    alert("Enter a valid quantity.");
+    return;
+  }
+
+  updateProduct({
+    ...product,
+    stock: Number(product.stock) + quantity,
+  });
+};
   return (
     <div className="flex bg-gray-100 min-h-screen">
 
@@ -135,7 +180,9 @@ const handleEdit = (product) => {
 
                   <th className="p-4 text-left">Price</th>
 
-                  <th className="p-4 text-left">Stock</th>
+                  <th className="px-4 py-3">Stock</th>
+
+                  <th className="p-4 text-left">Quantity</th>
 
                   <th className="p-4 text-left">Rating</th>
 
@@ -178,22 +225,36 @@ const handleEdit = (product) => {
         ₹ {product.price}
       </td>
 
-      <td className="p-4">
-
-  {product.inStock ? (
-
-    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-      🟢 In Stock
+      <td className="px-4 py-3">
+  {product.stock === 0 ? (
+    <span className="text-red-600 font-bold">
+      Out of Stock
     </span>
-
+  ) : product.stock <= 10 ? (
+    <span className="text-orange-500 font-bold">
+      {product.stock} Left
+    </span>
   ) : (
+    <span className="text-green-600 font-bold">
+      {product.stock}
+    </span>
+  )}
+</td>
 
+    <td className="p-4">
+  {product.stock === 0 ? (
     <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
       🔴 Out of Stock
     </span>
-
+  ) : product.stock <= 10 ? (
+    <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">
+      🟠 {product.stock} Left
+    </span>
+  ) : (
+    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+      🟢 {product.stock} In Stock
+    </span>
   )}
-
 </td>
 
       <td className="p-4">
@@ -235,6 +296,13 @@ const handleEdit = (product) => {
   >
     🗑 Delete
   </button>
+
+  <button
+  onClick={() => handleRestock(product)}
+  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg"
+>
+  ➕ Restock
+</button>
 
 </div>
 

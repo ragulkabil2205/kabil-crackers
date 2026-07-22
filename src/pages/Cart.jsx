@@ -1,7 +1,10 @@
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 function Cart() {
+
+  const navigate = useNavigate();
   const {
     cartItems,
     increaseQuantity,
@@ -192,13 +195,25 @@ const grandTotal = totalPrice - discount + delivery;
   </span>
 </div>
 
-              <Link to="/checkout">
-  <button
-    className="mt-6 w-full bg-blue-950 text-white py-4 rounded-xl font-bold hover:bg-blue-900"
-  >
-    Proceed to Checkout
-  </button>
-</Link>
+            <button
+  onClick={() => {
+    const insufficient = cartItems.find(
+      (item) => item.quantity > Number(item.stock || 0)
+    );
+
+    if (insufficient) {
+      alert(
+        `${insufficient.name} has only ${insufficient.stock} items available.`
+      );
+      return;
+    }
+
+    navigate("/checkout");
+  }}
+  className="mt-6 w-full bg-blue-950 text-white py-4 rounded-xl font-bold hover:bg-blue-900"
+>
+  Proceed to Checkout
+</button>
 
             </div>
           </>

@@ -1,58 +1,90 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import productsData from "../data/products";
+
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  doc,
+  runTransaction,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 const ProductsContext = createContext();
+const productsCollection = collection(db, "products");
 
 export function ProductsProvider({ children }) {
-  const [products, setProducts] = useState(() => {
-    const savedProducts = localStorage.getItem("products");
+ const [products, setProducts] = useState([]);
 
-    return savedProducts
-      ? JSON.parse(savedProducts)
-      : productsData;
-  });
+ const addProduct = async (newProduct) => {
+  await addDoc(productsCollection, newProduct);
+};
 
-  const addProduct = (newProduct) => {
-    setProducts((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        ...newProduct,
-      },
-    ]);
-  };
+ const updateProduct = async (updatedProduct) => {
+  const { id, ...data } = updatedProduct;
 
-  const updateProduct = (updatedProduct) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === updatedProduct.id
-          ? updatedProduct
-          : product
-      )
-    );
-  };
+  await updateDoc(doc(db, "products", id), data);
+};
 
-  const deleteProduct = (id) => {
-    setProducts((prev) =>
-      prev.filter((product) => product.id !== id)
-    );
-  };
+  const deleteProduct = async (id) => {
+  await deleteDoc(doc(db, "products", id));
+};
 
-  useEffect(() => {
-    localStorage.setItem(
-      "products",
-      JSON.stringify(products)
-    );
-  }, [products]);
+const reduceStock = async (productId, quantity) => {
+  const productRef = doc(db, "products", productId);
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const productDoc = await transaction.get(productRef);
+
+      if (!productDoc.exists()) {
+        throw new Error("Product not found");
+      }
+
+      const currentStock = Number(productDoc.data().stock || 0);
+
+      if (currentStock < quantity) {
+        throw new Error("Insufficient stock");
+      }
+
+      transaction.update(productRef, {
+        stock: currentStock - quantity,
+      });
+    });
+
+    return true;
+  } catch (error) {
+    alert(error.message);
+    return false;
+  }
+};
+
+useEffect(() => {
+  const unsubscribe = onSnapshot(
+    productsCollection,
+    (snapshot) => {
+      const firebaseProducts = snapshot.docs.map((doc) => ({
+  ...doc.data(),
+  id: doc.id,
+}));
+
+      setProducts(firebaseProducts);
+    }
+  );
+
+  return () => unsubscribe();
+}, []);
 
   return (
     <ProductsContext.Provider
       value={{
-        products,
-        addProduct,
-        deleteProduct,
-        updateProduct,
-      }}
+  products,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  reduceStock,
+}}
     >
       {children}
     </ProductsContext.Provider>

@@ -1,40 +1,97 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../firebase";
+import { useRef } from "react";
+import toast from "react-hot-toast";
+
 
 const OrdersContext = createContext();
 
 export function OrdersProvider({ children }) {
-  const [orders, setOrders] = useState(() => {
-    const savedOrders = localStorage.getItem("orders");
+  const [orders, setOrders] = useState([]);
 
-    return savedOrders ? JSON.parse(savedOrders) : [];
-  });
+  const firstLoad = useRef(true);
 
   const addOrder = (newOrder) => {
     setOrders((prev) => [...prev, newOrder]);
   };
 
-  const updateOrder = (updatedOrder) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === updatedOrder.id
-          ? updatedOrder
-          : order
-      )
-    );
-  };
+const updateOrder = async (updatedOrder) => {
+  await updateDoc(
+    doc(db, "orders", updatedOrder.firestoreId),
+    {
+      status: updatedOrder.status,
+    }
+  );
 
-  const deleteOrder = (id) => {
-    setOrders((prev) =>
-      prev.filter((order) => order.id !== id)
-    );
-  };
+  setOrders((prev) =>
+    prev.map((order) =>
+      order.firestoreId === updatedOrder.firestoreId
+        ? updatedOrder
+        : order
+    )
+  );
+};
 
-  useEffect(() => {
-    localStorage.setItem(
-      "orders",
-      JSON.stringify(orders)
+  const deleteOrder = async (firestoreId) => {
+  await deleteDoc(
+    doc(db, "orders", firestoreId)
+  );
+
+  setOrders((prev) =>
+    prev.filter(
+      (order) =>
+        order.firestoreId !== firestoreId
+    )
+  );
+};
+
+ 
+
+useEffect(() => {
+
+  const unsubscribe = onSnapshot(
+    collection(db, "orders"),
+    (snapshot) => {
+
+      const ordersData = snapshot.docs.map((doc) => ({
+        firestoreId: doc.id,
+        ...doc.data(),
+      }));
+
+      if (!firstLoad.current) {
+
+  if (ordersData.length > orders.length) {
+
+    const latest =
+      ordersData[ordersData.length - 1];
+
+    toast.success(
+      `🛒 New Order\n${latest.customer}\n₹${Number(
+        latest.total || 0
+      ).toLocaleString()}`
     );
-  }, [orders]);
+
+  }
+
+}
+
+firstLoad.current = false;
+
+setOrders(ordersData);
+
+    }
+  );
+
+  return () => unsubscribe();
+
+}, []);
 
   return (
     <OrdersContext.Provider
