@@ -20,19 +20,22 @@ function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
-          <img
-            src="/images/logo/logo.jpeg"
-            alt="Logo"
-            className="w-12 h-12 rounded-full object-cover"
-          />
+        <Link
+  to="/"
+  className="flex items-center gap-2 flex-1 min-w-0"
+>
+         <img
+  src="/images/logo/logo.jpeg"
+  alt="Logo"
+  className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
+/>
 
           <div>
-            <h1 className="text-xl md:text-3xl font-bold text-yellow-400">
+            <h1 className="text-base sm:text-lg md:text-3xl font-bold text-yellow-400">
               Kabil Crackers
             </h1>
 
-            <p className="text-[10px] md:text-xs text-white">
+            <p className="hidden sm:block text-xs text-white">
               Premium Sivakasi Fireworks
             </p>
           </div>
@@ -79,7 +82,7 @@ function Navbar() {
         </div>
 
         {/* Mobile Right */}
-        <div className="md:hidden flex items-center gap-4">
+        <div className="md:hidden flex items-center gap-3 shrink-0">
 
           <Link to="/wishlist" className="relative text-white">
             <FaHeart size={22} />
