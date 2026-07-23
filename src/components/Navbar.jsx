@@ -1,5 +1,3 @@
-import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -9,9 +7,8 @@ import {
   FaTimes,
 } from "react-icons/fa";
 
-//import { useCart } from "../context/CartContext";
-//import { useWishlist } from "../context/WishlistContext";
-
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 
 function Navbar() {
   const { cartItems } = useCart();
@@ -20,18 +17,8 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header
-  style={{
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    background: "red",
-    zIndex: 999999,
-    padding: "20px",
-  }}
->
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4 w-full">
+    <header className="sticky top-0 z-50 bg-blue-950 shadow-lg">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4">
 
         {/* Logo */}
         <Link
@@ -41,7 +28,7 @@ function Navbar() {
           <img
             src="/images/logo/logo.jpeg"
             alt="Logo"
-            className="w-8 h-8 md:w-14 md:h-14 rounded-full object-cover"
+            className="w-10 h-10 md:w-14 md:h-14 rounded-full object-cover"
           />
 
           <div>
@@ -86,12 +73,9 @@ function Navbar() {
         </nav>
 
         {/* Desktop Icons */}
-        <div className="flex items-center gap-5 text-white">
+        <div className="hidden md:flex items-center gap-5 text-white">
 
-          <Link
-            to="/wishlist"
-            className="relative"
-          >
+          <Link to="/wishlist" className="relative">
             <FaHeart
               size={22}
               className="hover:text-pink-400"
@@ -104,10 +88,7 @@ function Navbar() {
             )}
           </Link>
 
-          <Link
-            to="/cart"
-            className="relative"
-          >
+          <Link to="/cart" className="relative">
             <FaShoppingCart
               size={22}
               className="hover:text-yellow-400"
@@ -123,7 +104,7 @@ function Navbar() {
         </div>
 
         {/* Mobile Right */}
-        <div className="flex md:hidden items-center gap-3 shrink-0">
+        <div className="flex md:hidden items-center gap-4">
 
           <Link
             to="/wishlist"
@@ -163,6 +144,7 @@ function Navbar() {
           </button>
 
         </div>
+
       </div>
 
       {/* Mobile Menu */}
