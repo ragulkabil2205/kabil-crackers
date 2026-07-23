@@ -24,6 +24,8 @@ useEffect(() => {
   return () => clearTimeout(timer);
 
 }, [latestOrder]);
+if (!show || !latestOrder) return null;
+
   return (
 
     <div className="fixed top-5 right-5 z-50 bg-green-600 text-white rounded-xl shadow-xl p-5 w-80 animate-bounce">
