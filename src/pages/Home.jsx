@@ -5,7 +5,7 @@ import Categories from "../components/Categories";
 import WhatsAppButton from "../components/WhatsAppButton";
 import Offers from "../components/Offers";
 import SearchBar from "../components/SearchBar";
-import FeaturedProducts from "../components/FeaturedProducts";
+
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,11 +21,6 @@ function Home() {
       <Categories
   selectedCategory={selectedCategory}
   setSelectedCategory={setSelectedCategory}
-/>
-<FeaturedProducts />
-      <Products
-  searchTerm={searchTerm}
-  selectedCategory={selectedCategory}
 />
       <Offers />
       <WhatsAppButton />
