@@ -4,7 +4,7 @@ function RevenueCards({
   monthlyRevenue,
 }) {
   return (
-    <div className="grid md:grid-cols-3 gap-6 mt-8">
+    <div className="grid-cols-1 md:grid-cols-3 gap-6 mt-8">
 
       <div className="bg-white rounded-2xl shadow-lg p-6">
         <h3 className="text-gray-500">

@@ -91,6 +91,16 @@ function OrderDetailsModal({
       <p>{order.orderDate}</p>
     </div>
 
+    <div>
+  <p className="text-gray-500 font-semibold">
+    Required Delivery Date
+  </p>
+
+  <p className="font-bold text-blue-600">
+    {order.deliveryDate}
+  </p>
+</div>
+
   </div>
 
 </div>
@@ -152,6 +162,12 @@ function OrderDetailsModal({
 
         </div>
 
+      <div className="mt-6 p-4 bg-yellow-50 rounded-xl border border-yellow-300">
+  <p className="font-semibold text-yellow-800">
+    📷 Verify the customer's payment screenshot from the WhatsApp conversation before approving this order.
+  </p>
+</div>
+
         <div className="mt-8">
 <label className="block font-semibold mb-2">
   Current Status
@@ -178,22 +194,25 @@ function OrderDetailsModal({
 <select
   value={order.status}
   onChange={(e) => onStatusChange(e.target.value)}
-  className={`w-full rounded-xl p-3 font-bold border-2 ${
-  order.status === "Pending"
+className={`w-full rounded-xl p-3 font-bold border-2 ${
+  order.status === "Pending Verification"
     ? "bg-yellow-100 border-yellow-400 text-yellow-700"
+    : order.status === "Payment Verified"
+    ? "bg-green-100 border-green-400 text-green-700"
     : order.status === "Processing"
     ? "bg-blue-100 border-blue-400 text-blue-700"
     : order.status === "Delivered"
-    ? "bg-green-100 border-green-400 text-green-700"
+    ? "bg-emerald-100 border-emerald-400 text-emerald-700"
     : order.status === "Cancelled"
     ? "bg-red-100 border-red-400 text-red-700"
     : ""
 }`}
 >
-    <option>Pending</option>
-    <option>Processing</option>
-    <option>Delivered</option>
-    <option>Cancelled</option>
+    <option>Pending Verification</option>
+<option>Payment Verified</option>
+<option>Processing</option>
+<option>Delivered</option>
+<option>Cancelled</option>
   </select>
 
 </div>

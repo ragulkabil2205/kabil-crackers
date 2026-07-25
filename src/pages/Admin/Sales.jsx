@@ -1,5 +1,4 @@
-import Sidebar from "../../components/admin/Sidebar";
-import Topbar from "../../components/admin/Topbar";
+
 import { useOrders } from "../../context/OrdersContext";
 
 
@@ -215,14 +214,9 @@ orders.forEach((order) => {
 });
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
-      <Sidebar />
-
-      <div className="flex-1">
-        <Topbar />
-
-        <div className="p-8">
-          <h1 className="text-3xl font-bold text-gray-800">
+  <>
+    <div className="p-4 md:p-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
             📊 Sales Analytics
           </h1>
 
@@ -230,11 +224,11 @@ orders.forEach((order) => {
             Weekly & Monthly Sales Overview
           </p>
 
-          <div className="mt-6">
+          <div className="mt-6 flex justify-start">
 
   <button
     onClick={exportToExcel}
-    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl"
+    className="bg-green-600 hover:bg-green-700 text-white w-full md:w-auto px-6 py-3 rounded-xl transition"
   >
     📄 Export Excel
   </button>
@@ -266,9 +260,9 @@ orders.forEach((order) => {
 
         </div>
 
-      </div>
+      
 
-    </div>
+    </>
   );
 }
 

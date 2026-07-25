@@ -23,12 +23,13 @@ export function OrdersProvider({ children }) {
   };
 
 const updateOrder = async (updatedOrder) => {
-  await updateDoc(
-    doc(db, "orders", updatedOrder.firestoreId),
-    {
-      status: updatedOrder.status,
-    }
-  );
+ await updateDoc(
+  doc(db, "orders", updatedOrder.firestoreId),
+  {
+    status: updatedOrder.status,
+    stockReduced: updatedOrder.stockReduced || false,
+  }
+);
 
   setOrders((prev) =>
     prev.map((order) =>

@@ -5,7 +5,7 @@ function StatisticsCards({
   deliveredOrders,
 }) {
   return (
-    <div className="grid md:grid-cols-4 gap-6 mt-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
       <div className="bg-blue-600 text-white rounded-2xl shadow-lg p-6">
         <h3 className="text-lg font-semibold">

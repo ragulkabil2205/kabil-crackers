@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +14,7 @@ const { addOrder } = useOrders();
 const { reduceStock } = useProducts();
 
 
+
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -24,6 +26,17 @@ const { reduceStock } = useProducts();
 );
 
 const totalSaved = totalMRP - totalPrice;
+const today = new Date();
+
+const minDate = new Date(today);
+minDate.setDate(today.getDate() + 4);
+
+const maxDate = new Date(today);
+maxDate.setDate(today.getDate() + 7);
+
+const formatDate = (date) => {
+  return date.toISOString().split("T")[0];
+};
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,16 +44,23 @@ const totalSaved = totalMRP - totalPrice;
     address: "",
     city: "",
     pincode: "",
-    payment: "Cash on Delivery",
+    payment: "Prepaid",
+    deliveryDate: "",
   });
 
+  
+
   const handleCheckout = async () => {
+    console.log("Checkout Started");
     if (
+
+      
       !formData.name ||
       !formData.phone ||
       !formData.address ||
       !formData.city ||
-      !formData.pincode
+      !formData.pincode ||
+!formData.deliveryDate
     ) {
       alert("Please fill all required fields.");
       return;
@@ -54,6 +74,7 @@ const totalSaved = totalMRP - totalPrice;
     const confirmOrder = window.confirm(
       "Are you sure you want to place this order?"
     );
+    console.log("Confirm OK");
 
     if (!confirmOrder) return;
 
@@ -63,6 +84,8 @@ const totalSaved = totalMRP - totalPrice;
           `• ${item.name} x ${item.quantity} = ₹${item.price * item.quantity}`
       )
       .join("\n");
+console.log("Before Upload");
+     
 
     const message = `
 🎆 *New Order - Kabil Crackers*
@@ -84,10 +107,14 @@ ${formData.address}
 ${orderDetails}
 
 💰 Total: ₹${totalPrice}
-📎 I have attached my payment screenshot below.
+📷 Please attach your payment screenshot in this WhatsApp chat after sending this message.
+
+Our team will verify your payment and confirm your order.
 
 Thank you! 😊
 `;
+
+
 
 const order = {
   id: Date.now(),
@@ -96,14 +123,18 @@ const order = {
   address: formData.address,
   city: formData.city,
   pincode: formData.pincode,
+  deliveryDate: formData.deliveryDate,
 
-  payment: formData.payment,
+
+
+
 
   items: cartItems,
 
   total: totalPrice,
+paymentStatus: "Pending Verification",
 
-  status: "Pending",
+status: "Pending Verification",
 
   orderDate: new Date().toLocaleString(),
 };
@@ -111,15 +142,15 @@ const order = {
 await addDoc(collection(db, "orders"), order);
 addOrder(order);
 
-for (const item of cartItems) {
-  await reduceStock(item.id, item.quantity);
-}
+//for (const item of cartItems) {
+  //await reduceStock(item.id, item.quantity);
+//}
 
-    const whatsappUrl = `https://wa.me/918428902102?text=${encodeURIComponent(
+    const whatsappUrl = `https://wa.me/918680002102?text=${encodeURIComponent(
       message
     )}`;
 
-    window.open(whatsappUrl, "_blank");
+    window.location.href = whatsappUrl;
 
     clearCart();
 
@@ -202,6 +233,31 @@ for (const item of cartItems) {
                 className="w-full p-3 rounded-lg text-black"
               />
             </div>
+
+            <div className="md:col-span-2">
+  <label className="block mb-2 font-semibold">
+    📅 Required Delivery Date
+  </label>
+
+  <input
+    type="date"
+    min={formatDate(minDate)}
+    max={formatDate(maxDate)}
+    value={formData.deliveryDate}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        deliveryDate: e.target.value,
+      })
+    }
+    className="w-full p-3 rounded-lg text-black"
+  />
+
+  <p className="text-sm text-yellow-300 mt-2">
+    Delivery can be selected only between 4 and 7 days from today.
+  </p>
+</div>
+
           </div>
          
          <div className="bg-green-900 border border-green-500 rounded-xl p-5 mt-8">
@@ -278,6 +334,16 @@ for (const item of cartItems) {
 
   </div>
 
+</div>
+<div className="bg-yellow-100 border border-yellow-400 rounded-xl p-4 mt-6">
+  <h3 className="font-bold text-yellow-800 mb-2">
+    📷 Payment Screenshot
+  </h3>
+
+  <p className="text-yellow-700">
+    After clicking <strong>Place Order</strong>, WhatsApp will open automatically.
+    Please attach your payment screenshot there and send it to complete your order verification.
+  </p>
 </div>
 
 </div>

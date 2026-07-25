@@ -1,10 +1,10 @@
-import Sidebar from "../../components/admin/Sidebar";
-import Topbar from "../../components/admin/Topbar";
+
 import { useProducts } from "../../context/ProductsContext";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AddProductModal from "../../components/admin/AddProductModal";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
+import ImportProducts from "../../components/admin/ImportProducts";
 
 function Products() {
   const {
@@ -23,6 +23,7 @@ const [selectedProduct, setSelectedProduct] = useState(null);
 
 const [isModalOpen, setIsModalOpen] = useState(false);
 const [editingProduct, setEditingProduct] = useState(null);
+const [importModalOpen, setImportModalOpen] = useState(false);
     
 
   
@@ -116,18 +117,11 @@ const handleRestock = (product) => {
     stock: Number(product.stock) + quantity,
   });
 };
-  return (
-    <div className="flex bg-gray-100 min-h-screen">
+return(
+  <>
+    <div className="p-4 md:p-6">
 
-      <Sidebar />
-
-      <div className="flex-1">
-
-        <Topbar />
-
-        <div className="p-8">
-
-          <h2 className="text-3xl font-bold text-gray-800">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
             📦 Products Management
           </h2>
 
@@ -135,7 +129,7 @@ const handleRestock = (product) => {
             Manage all your cracker products.
           </p>
 
-        <div className="mt-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+        <div className="mt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
 
   <input
     type="text"
@@ -158,15 +152,21 @@ const handleRestock = (product) => {
   </select>
 <button
   onClick={() => setIsModalOpen(true)}
-  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition"
+  className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto px-6 py-3 rounded-xl font-semibold transition"
 >
   ➕ Add Product
 </button>
+<button
+  onClick={() => setImportModalOpen(true)}
+  className="bg-green-600 hover:bg-green-700 text-white w-full md:w-auto px-6 py-3 rounded-xl font-semibold transition"
+>
+  📄 Import Excel
+</button>
 </div>
 
-          <div className="bg-white rounded-2xl shadow-lg mt-8 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg mt-8 overflow-x-auto">
 
-            <table className="w-full">
+            <table className="min-w-[1200px] w-full">
 
               <thead className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
 
@@ -208,7 +208,7 @@ const handleRestock = (product) => {
        <img
   src={product.image}
   alt={product.name}
-  className="w-16 h-16 object-cover rounded-xl border-2 border-gray-200 shadow-md hover:scale-110 transition duration-300"
+  className="w-14 h-14 md:w-16 md:h-16 object-cover rounded-xl border-2 border-gray-200 shadow-md hover:scale-110 transition duration-300"
 />
 
       </td>
@@ -281,25 +281,25 @@ const handleRestock = (product) => {
 
      <td className="p-4">
 
-  <div className="flex justify-center gap-2">
+  <div className="flex flex-col xl:flex-row justify-center gap-2">
 
  <button
   onClick={() => handleEdit(product)}
-  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition w-full xl:w-auto"
 >
   ✏️ Edit
 </button>
 
   <button
     onClick={() => openDeleteModal(product)}
-    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition w-full xl:w-auto"
   >
     🗑 Delete
   </button>
 
   <button
   onClick={() => handleRestock(product)}
-  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg"
+  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg w-full xl:w-auto"
 >
   ➕ Restock
 </button>
@@ -349,7 +349,7 @@ const handleRestock = (product) => {
 
         </div>
 
-      </div>
+      
 <AddProductModal
   isOpen={isModalOpen}
   onClose={() => {
@@ -368,8 +368,12 @@ const handleRestock = (product) => {
   onConfirm={handleDelete}
   productName={selectedProduct?.name}
 />
-    </div>
-  );
+<ImportProducts
+  onClose={() => setImportModalOpen(false)}
+  isOpen={importModalOpen}
+/>
+    </>
+);
 }
 
 export default Products;

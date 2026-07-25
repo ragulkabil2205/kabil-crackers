@@ -12,7 +12,7 @@ function Footer() {
         </p>
 
         <div className="mt-8 space-y-2">
-          <p>📞 8428902102</p>
+          <p>📞 8680002102</p>
           <p>📧 kabilkutty22@gmail.com</p>
           <p>📍 Sivakasi, Tamil Nadu</p>
         </div>

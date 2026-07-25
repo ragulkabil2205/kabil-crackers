@@ -1,6 +1,5 @@
 import { useOrders } from "../../context/OrdersContext";
-import Sidebar from "../../components/admin/Sidebar";
-import Topbar from "../../components/admin/Topbar";
+
 import { useProducts } from "../../context/ProductsContext";
 
 import { useNavigate } from "react-router-dom";
@@ -64,17 +63,9 @@ const totalRevenue = orders
 
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+<>
 
-      <Sidebar />
-
-      <div className="flex-1">
-
-        <Topbar />
-
-        <NewOrderNotification
-  latestOrder={latestOrder}
-/>
+<NewOrderNotification latestOrder={latestOrder} />
 
         <div className="p-8">
 
@@ -251,9 +242,10 @@ const totalRevenue = orders
 
         </div>
 
-      </div>
+      </>
 
-    </div>
+    
+
   );
 
 

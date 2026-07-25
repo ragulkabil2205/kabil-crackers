@@ -19,12 +19,17 @@ const clearCart = () => {
 
   // Add to Cart
   const addToCart = (product) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-     toast.success("🛒 Added to Cart Successfully!", {
-  toastId: "cart-success",
-  autoClose: 2000,
-});
+  console.count("addToCart called");
+
+  setCartItems((prev) => {
+    const existing = prev.find((item) => item.id === product.id);
+
+    toast.success("🛒 Added to Cart Successfully!", {
+      id: "cart-success",
+      duration: 2000,
+    });
+
+    // rest of your code...
      if (existing) {
   return prev.map((item) =>
     item.id === product.id

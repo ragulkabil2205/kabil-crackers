@@ -285,7 +285,7 @@ I want to order:
 💰 Total : ₹${product.price * quantity}`;
 
                 window.open(
-                  `https://wa.me/918428902102?text=${encodeURIComponent(message)}`,
+                  `https://wa.me/918680002102?text=${encodeURIComponent(message)}`,
                   "_blank"
                 );
 
@@ -298,7 +298,7 @@ I want to order:
             </button>
 
             <a
-              href="tel:+918428902102"
+              href="tel:+918680002102"
               className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 duration-300"
             >
               📞 Call

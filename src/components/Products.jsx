@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 function Products({
   searchTerm = "",
-  selectedCategory = "All",
 }) {
   const { products } = useProducts();
 const { addToCart } = useCart();
@@ -23,11 +22,8 @@ const { wishlistItems, addToWishlist } = useWishlist();
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
 
-    const matchesCategory =
-      selectedCategory === "All" ||
-      item.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch ;
   });
 
  return (
@@ -35,9 +31,9 @@ const { wishlistItems, addToWishlist } = useWishlist();
     <section className="bg-blue-950 py-20">
       <div className="max-w-7xl mx-auto px-6">
 
-        <h2 className="text-4xl font-bold text-center text-yellow-400 mb-12">
-          ⭐ Best Selling Products
-        </h2>
+       <h2 className="text-4xl font-bold text-center text-yellow-400 mb-12">
+  📦 Our Products
+</h2>
         <p className="text-center text-gray-300 mb-10 text-lg">
   Showing{" "}
   <span className="text-yellow-400 font-bold">

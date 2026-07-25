@@ -70,6 +70,9 @@ function Navbar() {
           >
             Catalog
           </a>
+          <Link to="/track-order">
+  Track Order
+</Link>
         </nav>
 
         {/* Desktop Icons */}
@@ -159,13 +162,7 @@ function Navbar() {
             Home
           </Link>
 
-          <Link
-            to="/products"
-            onClick={() => setMenuOpen(false)}
-            className="block"
-          >
-            Products
-          </Link>
+          
 
           <Link
             to="/contact"

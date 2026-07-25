@@ -1,12 +1,12 @@
+import { useProducts } from "../../context/ProductsContext";
 import { useState, useEffect } from "react";
-import Sidebar from "../../components/admin/Sidebar";
-import Topbar from "../../components/admin/Topbar";
 import { useOrders } from "../../context/OrdersContext";
 import OrderDetailsModal from "../../components/admin/OrderDetailsModal";
 
 
 function Orders() {
   const { orders, updateOrder } = useOrders();
+const { reduceStock } = useProducts();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -16,7 +16,13 @@ function Orders() {
 const ordersPerPage = 10;
 const [isModalOpen, setIsModalOpen] = useState(false);
 
-const filteredOrders = orders.filter((order) => {
+const sortedOrders = [...orders].sort((a, b) => {
+  const aTime = a.createdAt?.toMillis?.() ?? 0;
+  const bTime = b.createdAt?.toMillis?.() ?? 0;
+  return bTime - aTime; // Latest first
+});
+
+const filteredOrders = sortedOrders.filter((order) => {
   const matchesSearch =
     order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.phone.includes(searchTerm) ||
@@ -70,7 +76,7 @@ const totalPages = Math.ceil(
 const totalOrders = orders.length;
 
 const pendingOrders = orders.filter(
-  (order) => order.status === "Pending"
+  (order) => order.status === "Pending Verification"
 ).length;
 
 const processingOrders = orders.filter(
@@ -124,32 +130,43 @@ const monthRevenue = deliveredList
   .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
 
-const handleStatusChange = (newStatus) => {
+const handleStatusChange = async (newStatus) => {
+
   const updatedOrder = {
     ...selectedOrder,
     status: newStatus,
   };
 
-  updateOrder(updatedOrder);
+  // Stock reduce only first time when payment is verified
+  if (
+    newStatus === "Payment Verified" &&
+    !selectedOrder.stockReduced
+  ) {
+    for (const item of selectedOrder.items) {
+      const success = await reduceStock(item.id, item.quantity);
+
+      if (!success) {
+        alert(`Stock not available for ${item.name}`);
+        return;
+      }
+    }
+
+    updatedOrder.stockReduced = true;
+  }
+
+  await updateOrder(updatedOrder);
+
   setSelectedOrder(updatedOrder);
 };
+ return (
+  <>
+    <div className="p-4 md:p-6">
 
-  return (
-    <div className="flex bg-gray-100 min-h-screen">
-
-      <Sidebar />
-
-      <div className="flex-1">
-
-        <Topbar />
-
-        <div className="p-8">
-
-         <h1 className="text-3xl font-bold text-gray-800">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
   📦 Orders Management
 </h1>
 
-<div className="grid grid-cols-1 md:grid-cols-5 gap-5 mt-8 mb-8">
+<div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-8 mb-8">
 
   <div className="bg-white rounded-2xl shadow-lg p-5">
     <p className="text-gray-500">Total Orders</p>
@@ -187,7 +204,7 @@ const handleStatusChange = (newStatus) => {
   </div>
 
 </div>
-
+<div className="flex flex-col lg:flex-row gap-4 mb-6">
 <input
   type="text"
   placeholder="🔍 Search Customer / Phone / Order ID..."
@@ -202,7 +219,13 @@ const handleStatusChange = (newStatus) => {
   className="border border-gray-300 rounded-xl px-4 py-3 mb-6 ml-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
 >
   <option value="All">All Status</option>
-  <option value="Pending">Pending</option>
+  <option value="Pending Verification">
+  Pending Verification
+</option>
+
+<option value="Payment Verified">
+  Payment Verified
+</option>
   <option value="Processing">Processing</option>
   <option value="Delivered">Delivered</option>
   <option value="Cancelled">Cancelled</option>
@@ -217,8 +240,9 @@ const handleStatusChange = (newStatus) => {
   <option value="Today">Today</option>
   <option value="This Month">This Month</option>
 </select>
+</div>
 
-<div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
   <div className="bg-green-50 rounded-2xl shadow-lg p-5">
     <p className="text-green-700">Today's Revenue</p>
@@ -254,9 +278,9 @@ const handleStatusChange = (newStatus) => {
 
 </div>
 
-<div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+<div className="bg-white rounded-2xl shadow-lg overflow-x-auto">
 
-  <table className="w-full">
+  <table className="min-w-[900px] w-full">
 
     <thead className="bg-blue-700 text-white">
 
@@ -326,15 +350,17 @@ const handleStatusChange = (newStatus) => {
       <td className="p-4">
 
        <span
-  className={`px-3 py-1 rounded-full text-sm font-semibold ${
-    order.status === "Pending"
-      ? "bg-yellow-100 text-yellow-700"
-      : order.status === "Processing"
-      ? "bg-blue-100 text-blue-700"
-      : order.status === "Delivered"
-      ? "bg-green-100 text-green-700"
-      : "bg-red-100 text-red-700"
-  }`}
+ className={`px-3 py-1 rounded-full text-sm font-semibold ${
+  order.status === "Pending Verification"
+    ? "bg-yellow-100 text-yellow-700"
+    : order.status === "Payment Verified"
+    ? "bg-green-100 text-green-700"
+    : order.status === "Processing"
+    ? "bg-blue-100 text-blue-700"
+    : order.status === "Delivered"
+    ? "bg-emerald-100 text-emerald-700"
+    : "bg-red-100 text-red-700"
+}`}
 >
   {order.status}
 </span>
@@ -348,7 +374,7 @@ const handleStatusChange = (newStatus) => {
     setSelectedOrder(order);
     setIsModalOpen(true);
   }}
-  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg w-full lg:w-auto"
 >
   👁 View
 </button>
@@ -363,7 +389,7 @@ const handleStatusChange = (newStatus) => {
 
   </table>
 
-  <div className="flex justify-center items-center gap-3 py-6">
+  <div className="flex flex-col md:flex-row justify-center items-center gap-3 py-6">
 
   <button
     onClick={() =>
@@ -396,7 +422,7 @@ const handleStatusChange = (newStatus) => {
 </div>
         </div>
 
-      </div>
+      
 <OrderDetailsModal
   isOpen={isModalOpen}
   onClose={() => {
@@ -406,7 +432,7 @@ const handleStatusChange = (newStatus) => {
   order={selectedOrder}
   onStatusChange={handleStatusChange}
 />
-    </div>
+    </>
   );
 }
 
