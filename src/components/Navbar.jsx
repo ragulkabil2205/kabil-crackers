@@ -172,15 +172,15 @@ function Navbar() {
             Contact
           </Link>
 
-          <a
-            href="/pdf/Kabil-Crackers-Catalog.pdf"
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => setMenuOpen(false)}
-            className="block"
-          >
-            Catalog
-          </a>
+          
+
+          <Link
+  to="/track-order"
+  onClick={() => setMenuOpen(false)}
+  className="block"
+>
+  Track Order
+</Link>
 
         </div>
       )}

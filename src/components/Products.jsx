@@ -11,6 +11,8 @@ function Products({
   searchTerm = "",
 }) {
   const { products } = useProducts();
+  console.log("Products:", products);
+console.log("Count:", products.length);
 const { addToCart } = useCart();
 const { wishlistItems, addToWishlist } = useWishlist();
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
   Product{filteredProducts.length !== 1 ? "s" : ""}
 </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-8">
 
           {filteredProducts.map((item) => {
   console.log(item.name, item.stock, typeof item.stock);
@@ -51,7 +53,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
             
             <div
               key={item.id}
-             className="bg-blue-900 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-yellow-400/40 hover:-translate-y-2 hover:scale-105 transition-all duration-500"
+             className="bg-blue-900 rounded-xl overflow-hidden shadow-lg hover:shadow-yellow-400/40 transition-all duration-300"
             >
 
               <div className="relative">
@@ -61,7 +63,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
   alt={item.name}
   loading="lazy"
   onClick={() => navigate(`/product/${item.id}`)}
-  className="w-full h-56 object-cover transition-transform duration-500 cursor-pointer hover:scale-110 hover:rotate-1"
+  className="w-full h-36 md:h-56 object-cover cursor-pointer hover:scale-105 transition"
 />
 {Number(item.stock) === 0 && (
   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -98,11 +100,11 @@ const { wishlistItems, addToWishlist } = useWishlist();
 
               </div>
              
-              <div className="p-5">
+              <div className="p-3 md:p-5">
 
                 <h3
   onClick={() => navigate(`/product/${item.id}`)}
-  className="text-xl font-bold text-yellow-400 cursor-pointer hover:text-yellow-300"
+  className="text-sm md:text-xl font-bold text-yellow-400 leading-tight cursor-pointer"
 >
   {item.name}
 </h3>
@@ -119,9 +121,9 @@ const { wishlistItems, addToWishlist } = useWishlist();
                     {item.rating}
                   </span>
 
-                  <span className="text-gray-300 text-sm">
-                    ({item.reviews} Reviews)
-                  </span>
+                  <span className="hidden md:inline text-gray-300 text-sm">
+  ({item.reviews} Reviews)
+</span>
 
                 </div>
 
@@ -141,7 +143,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
                     MRP ₹ {item.originalPrice}
                   </p>
 
-                  <p className="text-2xl font-bold text-yellow-400">
+                  <p className="text-lg md:text-2xl font-bold text-yellow-400">
                     Our Price ₹ {item.price}
                   </p>
 
@@ -159,7 +161,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
     }, 2000);
   }}
   disabled={Number(item.stock || 0) <= 0}
-  className={`mt-3 w-full py-3 rounded-xl font-bold transition-all duration-300 ${
+ className={`mt-2 w-full py-2 md:py-3 rounded-lg font-bold text-sm md:text-base ${
     Number(item.stock || 0) > 0
       ? addedItemId === item.id
         ? "bg-green-500 text-white"
