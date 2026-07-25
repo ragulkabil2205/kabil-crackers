@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { useOrders } from "../context/OrdersContext";
-import { useProducts } from "../context/ProductsContext";
+//import { useProducts } from "../context/ProductsContext";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 
@@ -11,7 +11,7 @@ function Checkout() {
   const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
 const { addOrder } = useOrders();
-const { reduceStock } = useProducts();
+// const { reduceStock } = useProducts();
 
 
 
@@ -26,17 +26,11 @@ const { reduceStock } = useProducts();
 );
 
 const totalSaved = totalMRP - totalPrice;
-const today = new Date();
+const gst = totalPrice * 0.05;
+const packing = totalPrice * 0.03;
+const shipment = 100;
+const grandTotal = totalPrice + gst + packing + shipment;
 
-const minDate = new Date(today);
-minDate.setDate(today.getDate() + 4);
-
-const maxDate = new Date(today);
-maxDate.setDate(today.getDate() + 7);
-
-const formatDate = (date) => {
-  return date.toISOString().split("T")[0];
-};
 
   const [formData, setFormData] = useState({
     name: "",
@@ -45,7 +39,7 @@ const formatDate = (date) => {
     city: "",
     pincode: "",
     payment: "Prepaid",
-    deliveryDate: "",
+  
   });
 
   
@@ -59,8 +53,7 @@ const formatDate = (date) => {
       !formData.phone ||
       !formData.address ||
       !formData.city ||
-      !formData.pincode ||
-!formData.deliveryDate
+      !formData.pincode 
     ) {
       alert("Please fill all required fields.");
       return;
@@ -106,7 +99,15 @@ ${formData.address}
 
 ${orderDetails}
 
-💰 Total: ₹${totalPrice}
+💰 Items Total: ₹${totalPrice}
+
+🧾 GST (5%): ₹${gst.toFixed(2)}
+
+📦 Packing Charges (3%): ₹${packing.toFixed(2)}
+
+🚚 Shipment Charges: ₹${shipment}
+
+💵 Grand Total: ₹${grandTotal.toFixed(2)}
 📷 Please attach your payment screenshot in this WhatsApp chat after sending this message.
 
 Our team will verify your payment and confirm your order.
@@ -123,7 +124,7 @@ const order = {
   address: formData.address,
   city: formData.city,
   pincode: formData.pincode,
-  deliveryDate: formData.deliveryDate,
+  
 
 
 
@@ -131,7 +132,11 @@ const order = {
 
   items: cartItems,
 
-  total: totalPrice,
+  subtotal: totalPrice,
+gst,
+packing,
+shipment,
+total: grandTotal,
 paymentStatus: "Pending Verification",
 
 status: "Pending Verification",
@@ -166,7 +171,7 @@ addOrder(order);
           🧾 Checkout
         </h1>
 
-        <div className="bg-blue-900 p-8 rounded-2xl">
+        <div className="bg-white-900 p-8 rounded-2xl">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block mb-2">Full Name</label>
@@ -177,7 +182,7 @@ addOrder(order);
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full p-3 rounded-lg text-black"
+                className="w-full p-3 rounded-lg text-white"
               />
             </div>
 
@@ -190,7 +195,7 @@ addOrder(order);
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                className="w-full p-3 rounded-lg text-black"
+                className="w-full p-3 rounded-lg text-white"
               />
             </div>
 
@@ -203,7 +208,7 @@ addOrder(order);
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
-                className="w-full p-3 rounded-lg text-black"
+                className="w-full p-3 rounded-lg text-white"
               />
             </div>
 
@@ -216,7 +221,7 @@ addOrder(order);
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
                 }
-                className="w-full p-3 rounded-lg text-black"
+                className="w-full p-3 rounded-lg text-white"
               />
             </div>
 
@@ -230,33 +235,11 @@ addOrder(order);
                 onChange={(e) =>
                   setFormData({ ...formData, pincode: e.target.value })
                 }
-                className="w-full p-3 rounded-lg text-black"
+                className="w-full p-3 rounded-lg text-white"
               />
             </div>
 
-            <div className="md:col-span-2">
-  <label className="block mb-2 font-semibold">
-    📅 Required Delivery Date
-  </label>
-
-  <input
-    type="date"
-    min={formatDate(minDate)}
-    max={formatDate(maxDate)}
-    value={formData.deliveryDate}
-    onChange={(e) =>
-      setFormData({
-        ...formData,
-        deliveryDate: e.target.value,
-      })
-    }
-    className="w-full p-3 rounded-lg text-black"
-  />
-
-  <p className="text-sm text-yellow-300 mt-2">
-    Delivery can be selected only between 4 and 7 days from today.
-  </p>
-</div>
+            
 
           </div>
          
@@ -387,11 +370,33 @@ addOrder(order);
 
 <hr className="my-4 border-blue-700" />
 
+<div className="flex justify-between mt-2">
+  <span>Items Total</span>
+  <span>₹ {totalPrice.toLocaleString()}</span>
+</div>
+
+<div className="flex justify-between mt-2">
+  <span>GST (5%)</span>
+  <span>₹ {Math.round(gst)}</span>
+</div>
+
+<div className="flex justify-between mt-2">
+  <span>Packing Charges (3%)</span>
+  <span>₹ {Math.round(packing)}</span>
+</div>
+
+<div className="flex justify-between mt-2">
+  <span>Shipment Charges</span>
+  <span>₹ {shipment}</span>
+</div>
+
+<hr className="my-4 border-blue-700" />
+
 <div className="flex justify-between text-2xl font-bold text-yellow-400">
-  <span>You Pay</span>
+  <span>Grand Total</span>
 
   <span>
-    ₹ {totalPrice.toLocaleString()}
+    ₹ {Math.round(grandTotal).toLocaleString()}
   </span>
 </div>
 

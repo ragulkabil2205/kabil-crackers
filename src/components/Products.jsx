@@ -63,7 +63,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
   alt={item.name}
   loading="lazy"
   onClick={() => navigate(`/product/${item.id}`)}
-  className="w-full h-36 md:h-56 object-cover cursor-pointer hover:scale-105 transition"
+  className="w-full h-32 md:h-56 object-cover cursor-pointer hover:scale-105 transition"
 />
 {Number(item.stock) === 0 && (
   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -130,13 +130,13 @@ const { wishlistItems, addToWishlist } = useWishlist();
                 <div className="mt-3">
 
                 {Number(item.stock || 0) > 0 ? (
-  <p className="text-green-400 font-semibold">
-    🟢 {item.stock} Available
-  </p>
+ <p className="inline-flex items-center bg-green-600 text-white text-xs px-2 py-1 rounded-full font-medium">
+  🟢 {item.stock}
+</p>
 ) : (
-  <p className="text-red-500 font-semibold">
-    🔴 Out of Stock
-  </p>
+<p className="inline-flex items-center bg-red-600 text-white text-xs px-2 py-1 rounded-full font-medium">
+  Out of Stock
+</p>
 )}
 
                   <p className="text-gray-400 line-through mt-3">
@@ -161,7 +161,7 @@ const { wishlistItems, addToWishlist } = useWishlist();
     }, 2000);
   }}
   disabled={Number(item.stock || 0) <= 0}
- className={`mt-2 w-full py-2 md:py-3 rounded-lg font-bold text-sm md:text-base ${
+ className={`mt-2 w-full py-2 md:py-2 rounded-lg font-semibold text-sm ${
     Number(item.stock || 0) > 0
       ? addedItemId === item.id
         ? "bg-green-500 text-white"
