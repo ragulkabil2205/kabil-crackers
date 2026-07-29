@@ -1,3 +1,6 @@
+import { downloadInvoice } from "../../utils/invoice";
+
+
 function OrderDetailsModal({
   isOpen,
   onClose,
@@ -79,9 +82,23 @@ function OrderDetailsModal({
         Payment
       </p>
 
-      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
-        {order.payment}
-      </span>
+      <div className="flex flex-col gap-2">
+
+  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold w-fit">
+    {order.payment}
+  </span>
+
+  <span
+    className={`px-3 py-1 rounded-full font-semibold w-fit ${
+      order.status === "Pending Verification"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-green-100 text-green-700"
+    }`}
+  >
+    {order.status}
+  </span>
+
+</div>
     </div>
 
     <div>
@@ -133,6 +150,9 @@ function OrderDetailsModal({
         <h4 className="font-bold">
           {item.name}
         </h4>
+      <p className="text-gray-500">
+  ₹ {item.price.toLocaleString()} × {item.quantity}
+</p>
 
         <p className="text-gray-500">
           Qty : {item.quantity}
@@ -152,21 +172,81 @@ function OrderDetailsModal({
 
         </div>
 
-        <div className="flex justify-between mt-8 text-2xl font-bold">
+        <div className="mt-8 bg-blue-50 rounded-2xl p-6">
 
-          <span>Total</span>
+  <h3 className="text-2xl font-bold mb-5">
+    🧾 Bill Summary
+  </h3>
 
-          <span>
-            ₹ {(order.total || 0).toLocaleString()}
-          </span>
+  <div className="space-y-3">
 
-        </div>
+    <div className="flex justify-between">
+      <span>Items Total</span>
+      <span className="font-semibold">
+        ₹ {(order.subtotal || 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between">
+      <span>GST (5%)</span>
+      <span className="font-semibold">
+        ₹ {Math.round(order.gst || 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between">
+      <span>Packing Charges (3%)</span>
+      <span className="font-semibold">
+        ₹ {Math.round(order.packing || 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between">
+      <span>Shipment Charges</span>
+      <span className="font-semibold">
+        ₹ {(order.shipment || 0).toLocaleString()}
+      </span>
+    </div>
+
+    <hr />
+
+    <div className="flex justify-between text-2xl font-bold text-green-700">
+
+      <span>Grand Total</span>
+
+      <span>
+        ₹ {(order.total || 0).toLocaleString()}
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
 
       <div className="mt-6 p-4 bg-yellow-50 rounded-xl border border-yellow-300">
   <p className="font-semibold text-yellow-800">
-    📷 Verify the customer's payment screenshot from the WhatsApp conversation before approving this order.
+   <div className="mt-6 p-5 bg-yellow-50 rounded-xl border border-yellow-300">
+
+  <h4 className="font-bold text-yellow-800 mb-2">
+    ⚠ Payment Verification
+  </h4>
+
+  <p className="text-yellow-700">
+    Verify the payment screenshot received on WhatsApp before changing the
+    order status to <strong>Payment Verified</strong>. Stock will be reduced
+    automatically after verification.
+  </p>
+
+</div>
   </p>
 </div>
+<button
+  onClick={() => downloadInvoice(order)}
+  className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl"
+>
+  ⬇ Download Invoice
+</button>
 
         <div className="mt-8">
 <label className="block font-semibold mb-2">

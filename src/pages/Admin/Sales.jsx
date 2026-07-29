@@ -12,10 +12,18 @@ import MonthlyChart from "../../components/admin/analytics/MonthlyChart";
 import RecentActivity from "../../components/admin/analytics/RecentActivity";
 import StatusPieChart from "../../components/admin/analytics/StatusPieChart";
 import TopProducts from "../../components/admin/analytics/TopProducts";
+import PaymentPieChart from "../../components/admin/analytics/PaymentPieChart";
 
 
 function Sales() {
   const { orders } = useOrders();
+  orders.forEach((order) => {
+  console.log("Payment:", order.payment);
+});
+  console.log("Orders Data:", orders);
+console.log("First Order:", orders[0]);
+
+  console.log("Orders:", orders);
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -96,6 +104,28 @@ const COLORS = [
   "#16a34a", // Green
 ];
 
+console.log(
+  "All Payment Values:",
+  orders.map((o) => o.payment)
+);
+const paymentData = [
+  {
+    name: "Cash",
+    value: orders.filter((order) =>
+      ["Cash", "Cash on Delivery"].includes(order.payment)
+    ).length,
+  },
+  {
+    name: "UPI",
+    value: orders.filter((order) =>
+      ["UPI", "Online Payment"].includes(order.payment)
+    ).length,
+  },
+  {
+    name: "Card",
+    value: orders.filter((order) => order.payment === "Card").length,
+  },
+];
 const exportToExcel = () => {
   const reportData = orders.map((order) => ({
     "Order ID": order.id,
@@ -257,6 +287,8 @@ orders.forEach((order) => {
 <StatusPieChart statusData={statusData} />
 
 <TopProducts topProducts={topProducts} />
+
+<PaymentPieChart paymentData={paymentData} />
 
         </div>
 

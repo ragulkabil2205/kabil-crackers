@@ -20,16 +20,25 @@ function Sidebar({ isOpen, setIsOpen }) {
       <aside
         className={`
           fixed top-0 left-0 z-50
-          w-64 h-screen
+          w-72 max-w-[85vw] h-screen
           bg-black text-white p-6
           transform transition-transform duration-300
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0 md:static md:block
         `}
       >
-        <h2 className="text-2xl font-bold text-yellow-400 mb-10">
-          Kabil Admin
-        </h2>
+       <div className="flex items-center justify-between mb-10">
+  <h2 className="text-2xl font-bold text-yellow-400">
+    Kabil Admin
+  </h2>
+
+  <button
+    onClick={() => setIsOpen(false)}
+    className="md:hidden text-3xl text-white hover:text-red-400"
+  >
+    ✕
+  </button>
+</div>
 
         <nav className="space-y-4">
           <Link
@@ -63,6 +72,21 @@ function Sidebar({ isOpen, setIsOpen }) {
           >
             📋 Orders
           </Link>
+          <Link
+  to="/admin/billing"
+  onClick={closeSidebar}
+  className="block bg-gray-800 hover:bg-yellow-400 hover:text-black px-4 py-3 rounded-lg transition"
+>
+  🧾 Billing
+</Link>
+
+<Link
+  to="/admin/bill-history"
+  onClick={closeSidebar}
+  className="block bg-gray-800 hover:bg-yellow-400 hover:text-black px-4 py-3 rounded-lg transition"
+>
+  📜 Bill History
+</Link>
         </nav>
       </aside>
     </>

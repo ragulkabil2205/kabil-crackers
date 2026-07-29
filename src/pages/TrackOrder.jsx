@@ -150,19 +150,69 @@ const handleSearch = () => {
                 {foundOrder.deliveryDate}
               </p>
 
-              <p>
-                <strong>Total:</strong> ₹
-                {Number(foundOrder.total).toLocaleString()}
-              </p>
+              <div className="mt-5 border rounded-xl p-4 bg-white">
 
+  <h3 className="font-bold text-lg mb-3">
+    🧾 Bill Summary
+  </h3>
+
+  <div className="flex justify-between py-1">
+    <span>Items Total</span>
+    <span>₹ {Number(foundOrder.subtotal).toLocaleString()}</span>
+  </div>
+
+  <div className="flex justify-between py-1">
+    <span>GST (5%)</span>
+    <span>₹ {Math.round(foundOrder.gst)}</span>
+  </div>
+
+  <div className="flex justify-between py-1">
+    <span>Packing Charges (3%)</span>
+    <span>₹ {Math.round(foundOrder.packing)}</span>
+  </div>
+
+  <div className="flex justify-between py-1">
+    <span>Shipment Charges</span>
+    <span>₹ {foundOrder.shipment}</span>
+  </div>
+
+  <hr className="my-3" />
+
+  <div className="flex justify-between font-bold text-lg text-green-700">
+    <span>Grand Total</span>
+    <span>₹ {Math.round(foundOrder.total).toLocaleString()}</span>
+  </div>
+
+</div>
+<div className="mt-5">
+
+  <p className="font-semibold mb-2">
+    Payment Status
+  </p>
+
+  <span
+    className={`px-4 py-2 rounded-full font-bold ${
+      foundOrder.paymentStatus === "Pending Verification"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-green-100 text-green-700"
+    }`}
+  >
+    {foundOrder.paymentStatus}
+  </span>
+
+</div>
               <div className="mt-5">
-                <span
-                  className={`px-4 py-2 rounded-full font-bold ${statusColor(
-                    foundOrder.status
-                  )}`}
-                >
-                  {foundOrder.status}
-                </span>
+                <p className="font-semibold mt-5 mb-2">
+  Order Status
+</p>
+
+<span
+  className={`px-4 py-2 rounded-full font-bold ${statusColor(
+    foundOrder.status
+  )}`}
+>
+  {foundOrder.status}
+</span>
               </div>
 
             </div>

@@ -19,6 +19,8 @@ import Orders from "./pages/Admin/Orders";
 import Sales from "./pages/Admin/Sales";
 import MigrateProducts from "./pages/Admin/MigrateProducts";
 import TrackOrder from "./pages/TrackOrder";
+import Billing from "./pages/Admin/Billing";
+import BillHistory from "./pages/Admin/BillHistory";
 
 
 function App() {
@@ -45,6 +47,7 @@ function App() {
     }
   />
 
+
   <Route
     path="/admin"
     element={
@@ -53,9 +56,12 @@ function App() {
       </ProtectedRoute>
     }
   >
+    
     <Route index element={<Dashboard />} />
     <Route path="products" element={<Products />} />
     <Route path="orders" element={<Orders />} />
+    <Route path="billing" element={<Billing />} />
+    <Route path="bill-history" element={<BillHistory />} />
   </Route>
 
   <Route path="/admin/login" element={<Login />} />

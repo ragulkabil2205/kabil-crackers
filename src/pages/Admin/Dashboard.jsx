@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useOrders } from "../../context/OrdersContext";
 
 import { useProducts } from "../../context/ProductsContext";
@@ -61,15 +62,34 @@ const totalRevenue = orders
       )[0]
     : null;
 
+    const [stats, setStats] = useState({
+  totalBills: 0,
+  totalSales: 0,
+});
+
+useEffect(() => {
+  const bills = JSON.parse(localStorage.getItem("bills")) || [];
+
+  const totalSales = bills.reduce(
+    (sum, bill) => sum + bill.grandTotal,
+    0
+  );
+
+  setStats({
+    totalBills: bills.length,
+    totalSales,
+  });
+}, []);
+
 
   return (
 <>
 
 <NewOrderNotification latestOrder={latestOrder} />
 
-        <div className="p-8">
+        <div className="p-4 sm:p-5 sm:p-6md:p-8">
 
-          <h2 className="text-3xl font-bold text-gray-800">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Dashboard Overview
           </h2>
 
@@ -77,14 +97,14 @@ const totalRevenue = orders
             Welcome back! Manage your products from here.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mt-10 gap-6 mt-10">
 
            <div
   onClick={() => navigate("/admin/products?filter=all")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
               <h3 className="text-gray-500">Total Products</h3>
-              <p className="text-4xl font-bold mt-3 text-blue-600">
+              <p className="text-3xl sm:text-4xl font-bold mt-3 text-blue-600">
                 {totalProducts}
 
               </p>
@@ -94,11 +114,11 @@ const totalRevenue = orders
             </div>
             <div
   onClick={() => navigate("/admin/orders")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
   <h3 className="text-gray-500">Total Orders</h3>
 
-  <p className="text-4xl font-bold mt-3 text-green-600">
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-green-600">
     {totalOrders}
   </p>
 
@@ -109,11 +129,11 @@ const totalRevenue = orders
 
 <div
   onClick={() => navigate("/admin/orders")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
   <h3 className="text-gray-500">Pending Orders</h3>
 
-  <p className="text-4xl font-bold mt-3 text-yellow-500">
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-yellow-500">
     {pendingOrders}
   </p>
 
@@ -124,11 +144,11 @@ const totalRevenue = orders
 
 <div
   onClick={() => navigate("/admin/orders")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
   <h3 className="text-gray-500">Delivered Orders</h3>
 
-  <p className="text-4xl font-bold mt-3 text-green-600">
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-green-600">
     {deliveredOrders}
   </p>
 
@@ -139,11 +159,11 @@ const totalRevenue = orders
 
 <div
   onClick={() => alert("Revenue Reports Coming Soon")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
   <h3 className="text-gray-500">Revenue</h3>
 
-  <p className="text-4xl font-bold mt-3 text-purple-600">
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-purple-600">
     ₹ {totalRevenue.toLocaleString()}
   </p>
 
@@ -155,10 +175,10 @@ const totalRevenue = orders
 
            <div
   onClick={() => navigate("/admin/products?filter=bestseller")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
               <h3 className="text-gray-500">Best Sellers</h3>
-              <p className="text-4xl font-bold mt-3 text-green-600">
+              <p className="text-3xl sm:text-4xl font-bold mt-3 text-green-600">
                 {bestSellers}
               </p>
               <p className="text-sm text-green-600 mt-4 font-semibold">
@@ -168,10 +188,10 @@ const totalRevenue = orders
 
             <div
   onClick={() => navigate("/admin/products?filter=outofstock")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
               <h3 className="text-gray-500">Out of Stock</h3>
-              <p className="text-4xl font-bold mt-3 text-red-600">
+              <p className="text-3xl sm:text-4xl font-bold mt-3 text-red-600">
   {outOfStockProducts}
 </p>
 
@@ -184,10 +204,10 @@ const totalRevenue = orders
 
             <div
   onClick={() => alert("Coming Soon")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
               <h3 className="text-gray-500">Categories</h3>
-              <p className="text-4xl font-bold mt-3 text-yellow-500">
+              <p className="text-3xl sm:text-4xl font-bold mt-3 text-yellow-500">
   {totalCategories}
 </p>
 <p className="text-sm text-yellow-600 mt-4 font-semibold">
@@ -197,11 +217,11 @@ const totalRevenue = orders
 
             <div
   onClick={() => navigate("/admin/products")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
   <h3 className="text-gray-500">Total Quantity</h3>
 
-  <p className="text-4xl font-bold mt-3 text-green-600">
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-green-600">
     {totalQuantity}
   </p>
 
@@ -212,11 +232,11 @@ const totalRevenue = orders
 
 <div
   onClick={() => navigate("/admin/products?filter=lowstock")}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 cursor-pointer"
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
 >
   <h3 className="text-gray-500">Low Stock</h3>
 
-  <p className="text-4xl font-bold mt-3 text-orange-500">
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-orange-500">
     {lowStockProducts}
   </p>
 
@@ -224,12 +244,41 @@ const totalRevenue = orders
     Need Restock
   </p>
 </div>
+<div
+  onClick={() => navigate("/admin/bill-history")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl  hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
+>
+  <h3 className="text-gray-500">Billing Software Bills</h3>
+
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-blue-600">
+    {stats.totalBills}
+  </p>
+
+  <p className="text-sm text-blue-600 mt-4 font-semibold">
+    View Bill History →
+  </p>
+</div>
+
+<div
+  onClick={() => navigate("/admin/bill-history")}
+  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-300 p-5 sm:p-6 cursor-pointer"
+>
+  <h3 className="text-gray-500">Billing Software Sales</h3>
+
+  <p className="text-3xl sm:text-4xl font-bold mt-3 text-green-600">
+    ₹ {stats.totalSales.toLocaleString()}
+  </p>
+
+  <p className="text-sm text-green-600 mt-4 font-semibold">
+    View Billing Reports →
+  </p>
+</div>
 
 <div className="mt-10">
 
   <button
     onClick={() => navigate("/admin/sales")}
-    className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl text-xl font-bold shadow-lg transition"
+    className="w-full sm:w-auto bg-blue-700 hover:bg-blue-800 text-white px-6 py-4 rounded-2xl text-lg sm:text-xl font-bold shadow-lg transition"
   >
     📊 Open Sales Analytics
   </button>

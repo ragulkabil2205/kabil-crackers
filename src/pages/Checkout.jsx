@@ -124,8 +124,9 @@ const order = {
   address: formData.address,
   city: formData.city,
   pincode: formData.pincode,
+  source: "Website",
   
-
+payment: "UPI",
 
 
 
