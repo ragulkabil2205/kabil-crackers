@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { useOrders } from "../../context/OrdersContext";
 
 
@@ -17,6 +18,39 @@ import PaymentPieChart from "../../components/admin/analytics/PaymentPieChart";
 
 function Sales() {
   const { orders } = useOrders();
+  const [dateFilter, setDateFilter] = useState("today");
+  const filteredOrders = orders.filter((order) => {
+  if (!order.orderDate) return false;
+
+  const orderDate = new Date(order.orderDate);
+  const today = new Date();
+
+  switch (dateFilter) {
+    case "today":
+      return orderDate.toDateString() === today.toDateString();
+
+    case "7days": {
+      const last7 = new Date();
+      last7.setDate(today.getDate() - 6);
+      return orderDate >= last7;
+    }
+
+    case "30days": {
+      const last30 = new Date();
+      last30.setDate(today.getDate() - 29);
+      return orderDate >= last30;
+    }
+
+    case "month":
+      return (
+        orderDate.getMonth() === today.getMonth() &&
+        orderDate.getFullYear() === today.getFullYear()
+      );
+
+    default:
+      return true;
+  }
+});
   orders.forEach((order) => {
   console.log("Payment:", order.payment);
 });
@@ -35,48 +69,27 @@ console.log("First Order:", orders[0]);
   const today = new Date();
 
   // Today's Revenue
-  const todayRevenue = orders
-    .filter((order) => {
-      if (order.status !== "Delivered") return false;
-
-      const date = new Date(order.orderDate);
-
-      return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      );
-    })
-    .reduce((sum, order) => sum + Number(order.total || 0), 0);
+ const totalRevenue = filteredOrders
+  .filter((order) => order.status === "Delivered")
+  .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
   // Monthly Revenue
-  const monthlyRevenue = orders
-    .filter((order) => {
-      if (order.status !== "Delivered") return false;
+ const monthlyRevenue = totalRevenue;
+    const totalOrders = filteredOrders.length;
 
-      const date = new Date(order.orderDate);
-
-      return (
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      );
-    })
-    .reduce((sum, order) => sum + Number(order.total || 0), 0);
-    const totalOrders = orders.length;
-
-const pendingOrders = orders.filter(
+const pendingOrders = filteredOrders.filter(
   (order) => order.status === "Pending"
 ).length;
 
-const processingOrders = orders.filter(
+const processingOrders = filteredOrders.filter(
   (order) => order.status === "Processing"
 ).length;
 
-const deliveredOrders = orders.filter(
+const deliveredOrders = filteredOrders.filter(
   (order) => order.status === "Delivered"
 ).length;
 
-const recentOrders = [...orders]
+const recentOrders = [...filteredOrders]
   .sort(
     (a, b) =>
       new Date(b.orderDate) - new Date(a.orderDate)
@@ -172,7 +185,7 @@ const exportToExcel = () => {
 
 const productSales = {};
 
-orders.forEach((order) => {
+filteredOrders.forEach((order) => {
   if (order.status !== "Delivered") return;
 
   order.items?.forEach((item) => {
@@ -193,10 +206,10 @@ const topProducts = Object.entries(productSales)
   .slice(0, 5);
 
   // Weekly Graph Data
-  orders.forEach((order) => {
-    if (order.status !== "Delivered") return;
+  filteredOrders.forEach((order) => {
+  if (order.status !== "Delivered") return;
 
-    const date = new Date(order.orderDate);
+  const date = new Date(order.orderDate);
 
     if (isNaN(date.getTime())) return;
 
@@ -206,10 +219,7 @@ const topProducts = Object.entries(productSales)
   });
 
   // Weekly Revenue
-  const weeklyRevenue = weekData.reduce(
-    (sum, item) => sum + item.sales,
-    0
-  );
+  const weeklyRevenue = totalRevenue;
 
   const monthNames = [
   "Jan",
@@ -231,7 +241,7 @@ const monthData = monthNames.map((month) => ({
   sales: 0,
 }));
 
-orders.forEach((order) => {
+filteredOrders.forEach((order) => {
   if (order.status !== "Delivered") return;
 
   const date = new Date(order.orderDate);
@@ -253,7 +263,53 @@ orders.forEach((order) => {
           <p className="text-gray-500 mt-2">
             Weekly & Monthly Sales Overview
           </p>
+<div className="flex flex-wrap gap-3 mt-6">
 
+  <button
+    onClick={() => setDateFilter("today")}
+    className={`px-4 py-2 rounded-lg transition ${
+      dateFilter === "today"
+        ? "bg-blue-600 text-white"
+        : "bg-white border"
+    }`}
+  >
+    Today
+  </button>
+
+  <button
+    onClick={() => setDateFilter("7days")}
+    className={`px-4 py-2 rounded-lg transition ${
+      dateFilter === "7days"
+        ? "bg-blue-600 text-white"
+        : "bg-white border"
+    }`}
+  >
+    Last 7 Days
+  </button>
+
+  <button
+    onClick={() => setDateFilter("30days")}
+    className={`px-4 py-2 rounded-lg transition ${
+      dateFilter === "30days"
+        ? "bg-blue-600 text-white"
+        : "bg-white border"
+    }`}
+  >
+    Last 30 Days
+  </button>
+
+  <button
+    onClick={() => setDateFilter("month")}
+    className={`px-4 py-2 rounded-lg transition ${
+      dateFilter === "month"
+        ? "bg-blue-600 text-white"
+        : "bg-white border"
+    }`}
+  >
+    This Month
+  </button>
+
+</div>
           <div className="mt-6 flex justify-start">
 
   <button
@@ -265,10 +321,10 @@ orders.forEach((order) => {
 
 </div>
 
-         <RevenueCards
-  todayRevenue={todayRevenue}
-  weeklyRevenue={weeklyRevenue}
-  monthlyRevenue={monthlyRevenue}
+       <RevenueCards
+  todayRevenue={totalRevenue}
+  weeklyRevenue={totalRevenue}
+  monthlyRevenue={totalRevenue}
 />
 
 <StatisticsCards

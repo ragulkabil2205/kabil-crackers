@@ -18,7 +18,17 @@ export function ProductsProvider({ children }) {
  const [products, setProducts] = useState([]);
 
  const addProduct = async (newProduct) => {
-  await addDoc(productsCollection, newProduct);
+  console.log("STEP 1");
+
+  try {
+    const docRef = await addDoc(productsCollection, newProduct);
+    console.log("STEP 2", docRef.id);
+  } catch (err) {
+    console.error("FULL ERROR:", err);
+    console.error("ERROR CODE:", err.code);
+    console.error("ERROR MESSAGE:", err.message);
+    alert(`${err.code}\n${err.message}`);
+  }
 };
 
  const updateProduct = async (updatedProduct) => {

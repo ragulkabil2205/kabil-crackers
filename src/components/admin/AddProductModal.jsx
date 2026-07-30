@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useProducts } from "../../context/ProductsContext";
 
+
+
 function AddProductModal({
   isOpen,
   onClose,
@@ -21,6 +23,7 @@ const [formData, setFormData] = useState({
   image: "",
   bestseller: false,
 });
+const [selectedImage, setSelectedImage] = useState(null);
 
 useEffect(() => {
 if (editProduct) {
@@ -51,6 +54,29 @@ setFormData({
 
   }
 }, [editProduct]);
+
+const uploadImage = async (file) => {
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("upload_preset", "kabil_products");
+
+  const response = await fetch(
+    "https://api.cloudinary.com/v1_1/lpopjrns/image/upload",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error?.message || "Image upload failed");
+  }
+
+  return data.secure_url;
+};
 const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
 
@@ -59,7 +85,7 @@ const handleChange = (e) => {
     [name]: type === "checkbox" ? checked : value,
   }));
 };
-const handleSave = () => {
+const handleSave = async () => {
   console.log("EDIT PRODUCT =>", editProduct);
   console.log(editProduct);
   if (
@@ -73,7 +99,12 @@ const handleSave = () => {
   alert("Please fill all required fields.");
   return;
 }
+let imageUrl = formData.image;
 
+// New image selected-na Firebase Storage upload pannu
+if (selectedImage) {
+  imageUrl = await uploadImage(selectedImage);
+}
 const productData = {
   ...(editProduct && { id: editProduct.id }),
 
@@ -84,15 +115,41 @@ const productData = {
   stock: Number(formData.stock),
   description: formData.description,
   rating: Number(formData.rating),
-  image: formData.image,
+  image: imageUrl,
   bestseller: formData.bestseller,
 };
 
+ try {
   if (editProduct) {
-    updateProduct(productData);
+    await updateProduct(productData);
   } else {
-    addProduct(productData);
+    await addProduct(productData);
   }
+
+  setShowToast(true);
+
+  setTimeout(() => {
+    setShowToast(false);
+
+    setFormData({
+      name: "",
+      category: "",
+      price: "",
+      originalPrice: "",
+      stock: "",
+      description: "",
+      rating: "",
+      image: "",
+      bestseller: false,
+    });
+
+    onClose();
+  }, 2000);
+
+} catch (err) {
+  console.error(err);
+  alert(err.message);
+}
 
   setShowToast(true);
 
@@ -217,28 +274,22 @@ onChange={(e) => {
 
   if (!file) return;
 
-  // Allow only image files
   if (!file.type.startsWith("image/")) {
     alert("Please select a valid image.");
     return;
   }
 
-  // Max 2 MB
- if (file.size > 10 * 1024 * 1024) {
-  alert("Image size should be less than 10 MB.");
-  return;
-}
+  if (file.size > 10 * 1024 * 1024) {
+    alert("Image size should be less than 10 MB.");
+    return;
+  }
 
-  const reader = new FileReader();
+  setSelectedImage(file);
 
-  reader.onloadend = () => {
-    setFormData((prev) => ({
-      ...prev,
-      image: reader.result,
-    }));
-  };
-
-  reader.readAsDataURL(file);
+  setFormData((prev) => ({
+    ...prev,
+    image: URL.createObjectURL(file),
+  }));
 }}
     className="w-full border rounded-xl p-3"
   />

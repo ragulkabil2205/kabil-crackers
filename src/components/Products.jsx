@@ -48,6 +48,12 @@ const { wishlistItems, addToWishlist } = useWishlist();
 
           {filteredProducts.map((item) => {
   console.log(item.name, item.stock, typeof item.stock);
+  const discount =
+  item.originalPrice > item.price
+    ? Math.round(
+        ((item.originalPrice - item.price) / item.originalPrice) * 100
+      )
+    : 0;
 
   return (
             
@@ -88,15 +94,11 @@ const { wishlistItems, addToWishlist } = useWishlist();
   </div>
 )}
 
-                <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                  🔥{" "}
-{Math.round(
-  ((item.originalPrice - item.price) /
-    item.originalPrice) *
-    100
+               {discount > 0 && (
+  <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+    🔥 {discount}% OFF
+  </div>
 )}
-% OFF
-                </div>
 
               </div>
              
@@ -140,7 +142,11 @@ const { wishlistItems, addToWishlist } = useWishlist();
 )}
 
                   <p className="text-gray-400 line-through mt-3">
-                    MRP ₹ {item.originalPrice}
+                    {item.originalPrice > item.price && (
+  <p className="text-gray-400 line-through mt-3">
+    MRP ₹ {item.originalPrice}
+  </p>
+)}
                   </p>
 
                   <p className="text-lg md:text-2xl font-bold text-yellow-400">
