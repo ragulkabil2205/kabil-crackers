@@ -87,11 +87,15 @@ const openDeleteModal = (product) => {
   setDeleteModalOpen(true);
 };
 
-const handleDelete = () => {
-  deleteProduct(selectedProduct.id);
+const handleDelete = async () => {
+  try {
+    await deleteProduct(selectedProduct.id);
 
-  setDeleteModalOpen(false);
-  setSelectedProduct(null);
+    setDeleteModalOpen(false);
+    setSelectedProduct(null);
+  } catch (err) {
+    alert(err.message);
+  }
 };
 
 const handleEdit = (product) => {

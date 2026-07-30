@@ -64,8 +64,8 @@ const { wishlistItems, addToWishlist } = useWishlist();
 
               <div className="relative">
 
-             <img
-  src={item.image}
+    <img
+  src={item.images?.[0] || item.image || null}
   alt={item.name}
   loading="lazy"
   onClick={() => navigate(`/product/${item.id}`)}

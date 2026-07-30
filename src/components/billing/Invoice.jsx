@@ -11,7 +11,7 @@ function Invoice({ bill }) {
 
         <p>No. XX, Sivakasi, Tamil Nadu</p>
 
-        <p>Mobile: +91 XXXXX XXXXX</p>
+        <p>Mobile: +91 86800 02102</p>
       </div>
 
       <div className="flex justify-between mt-6">

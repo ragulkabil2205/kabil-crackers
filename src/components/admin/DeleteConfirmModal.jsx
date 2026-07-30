@@ -19,6 +19,10 @@ function DeleteConfirmModal({
           Are you sure you want to delete
         </p>
 
+        <p className="mt-4 text-sm text-red-500">
+  ⚠️ This action cannot be undone.
+</p>
+
         <p className="font-bold text-lg mt-2 text-gray-800">
           "{productName}"
         </p>
@@ -27,14 +31,14 @@ function DeleteConfirmModal({
 
           <button
             onClick={onClose}
-            className="px-5 py-3 rounded-xl bg-gray-300 hover:bg-gray-400"
+            className="px-5 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 font-semibold transition"
           >
             Cancel
           </button>
 
           <button
             onClick={onConfirm}
-            className="px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white"
+            className="px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition"
           >
             Delete
           </button>

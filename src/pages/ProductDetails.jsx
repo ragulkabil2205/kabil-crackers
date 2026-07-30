@@ -449,11 +449,14 @@ I want to order:
               className="bg-blue-900 rounded-2xl overflow-hidden shadow-lg hover:scale-105 duration-300"
             >
 
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-48 object-cover"
-              />
+              
+                <img
+  src={item.images?.[0] || item.image}
+  alt={item.name}
+   className="w-full h-48 object-cover"
+/>
+               
+              
 
               <div className="p-4">
 

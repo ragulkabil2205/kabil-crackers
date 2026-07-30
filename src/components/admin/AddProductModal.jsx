@@ -8,7 +8,11 @@ function AddProductModal({
   onClose,
   editProduct = null,
 }) {
-const { addProduct, updateProduct } = useProducts();
+const {
+  products,
+  addProduct,
+  updateProduct,
+} = useProducts();
 
 const [showToast, setShowToast] = useState(false);
 
@@ -21,9 +25,10 @@ const [formData, setFormData] = useState({
   description: "",
   rating: "",
   image: "",
+  images: [],
   bestseller: false,
 });
-const [selectedImage, setSelectedImage] = useState(null);
+const [selectedImages, setSelectedImages] = useState([]);
 
 useEffect(() => {
 if (editProduct) {
@@ -36,7 +41,9 @@ if (editProduct) {
     description: editProduct.description || "",
     rating: editProduct.rating || "",
     image: editProduct.image || "",
+    images: editProduct.images || [editProduct.image],
     bestseller: editProduct.bestseller || false,
+    
   });
 }
   else {
@@ -49,9 +56,10 @@ setFormData({
   description: "",
   rating: "",
   image: "",
+  images: [],
   bestseller: false,
 });
-
+setSelectedImages([]);
   }
 }, [editProduct]);
 
@@ -99,11 +107,34 @@ const handleSave = async () => {
   alert("Please fill all required fields.");
   return;
 }
-let imageUrl = formData.image;
+const duplicateProduct = products.find((product) => {
+  const sameName =
+    product.name.trim().toLowerCase() ===
+    formData.name.trim().toLowerCase();
 
-// New image selected-na Firebase Storage upload pannu
-if (selectedImage) {
-  imageUrl = await uploadImage(selectedImage);
+  // Edit mode-la current product-a ignore pannu
+  if (editProduct) {
+    return sameName && product.id !== editProduct.id;
+  }
+
+  return sameName;
+});
+
+if (duplicateProduct) {
+  alert("❌ Product with this name already exists.");
+  return;
+}
+// Upload all selected images
+let imageUrls = formData.images || [];
+
+// New images selected
+if (selectedImages.length > 0) {
+  imageUrls = [];
+
+  for (const file of selectedImages) {
+    const url = await uploadImage(file);
+    imageUrls.push(url);
+  }
 }
 const productData = {
   ...(editProduct && { id: editProduct.id }),
@@ -115,7 +146,8 @@ const productData = {
   stock: Number(formData.stock),
   description: formData.description,
   rating: Number(formData.rating),
-  image: imageUrl,
+  image: imageUrls[0],
+images: imageUrls,
   bestseller: formData.bestseller,
 };
 
@@ -126,26 +158,7 @@ const productData = {
     await addProduct(productData);
   }
 
-  setShowToast(true);
-
-  setTimeout(() => {
-    setShowToast(false);
-
-    setFormData({
-      name: "",
-      category: "",
-      price: "",
-      originalPrice: "",
-      stock: "",
-      description: "",
-      rating: "",
-      image: "",
-      bestseller: false,
-    });
-
-    onClose();
-  }, 2000);
-
+ 
 } catch (err) {
   console.error(err);
   alert(err.message);
@@ -165,9 +178,10 @@ const productData = {
   description: "",
   rating: "",
   image: "",
+images: [],
   bestseller: false,
 });
-
+setSelectedImages([]);
     onClose();
   }, 2000);
 };
@@ -267,32 +281,41 @@ const productData = {
   </label>
 
   <input
-    type="file"
-    accept="image/*"
-onChange={(e) => {
-  const file = e.target.files[0];
+  type="file"
+  accept="image/*"
+  multiple
+  onChange={(e) => {
+    const files = Array.from(e.target.files);
 
-  if (!file) return;
+    if (files.length === 0) return;
 
-  if (!file.type.startsWith("image/")) {
-    alert("Please select a valid image.");
-    return;
-  }
+    if (files.length > 4) {
+      alert("Maximum 4 images allowed.");
+      return;
+    }
 
-  if (file.size > 10 * 1024 * 1024) {
-    alert("Image size should be less than 10 MB.");
-    return;
-  }
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) {
+        alert("Please select valid image files.");
+        return;
+      }
 
-  setSelectedImage(file);
+      if (file.size > 10 * 1024 * 1024) {
+        alert("Each image should be less than 10 MB.");
+        return;
+      }
+    }
 
-  setFormData((prev) => ({
-    ...prev,
-    image: URL.createObjectURL(file),
-  }));
-}}
-    className="w-full border rounded-xl p-3"
-  />
+    setSelectedImages(files);
+
+    setFormData((prev) => ({
+      ...prev,
+      images: files.map((file) => URL.createObjectURL(file)),
+      image: URL.createObjectURL(files[0]), // Preview first image
+    }));
+  }}
+  className="w-full border rounded-xl p-3"
+/>
 
 </div>
 {formData.image && (

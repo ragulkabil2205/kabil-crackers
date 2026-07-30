@@ -22,11 +22,11 @@ function QuickViewModal({
 
         <div className="grid md:grid-cols-2 gap-8">
 
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full rounded-xl"
-          />
+         <img
+  src={product.images?.[0] || product.image || null}
+  alt={product.name}
+  className="w-full rounded-xl"
+/>
 
           <div>
 
