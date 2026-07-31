@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Admin/Login";
@@ -13,15 +14,14 @@ import ProductDetails from "./pages/ProductDetails";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 //import FloatingWhatsApp from "./components/FloatingWhatsApp";
-import Dashboard from "./pages/Admin/Dashboard";
-import Products from "./pages/Admin/Products";
-import Orders from "./pages/Admin/Orders";
-import Sales from "./pages/Admin/Sales";
-import MigrateProducts from "./pages/Admin/MigrateProducts";
 import TrackOrder from "./pages/TrackOrder";
-import Billing from "./pages/Admin/Billing";
-import BillHistory from "./pages/Admin/BillHistory";
-
+const Dashboard = lazy(() => import("./pages/Admin/Dashboard"));
+const Products = lazy(() => import("./pages/Admin/Products"));
+const Orders = lazy(() => import("./pages/Admin/Orders"));
+const Sales = lazy(() => import("./pages/Admin/Sales"));
+const Billing = lazy(() => import("./pages/Admin/Billing"));
+const BillHistory = lazy(() => import("./pages/Admin/BillHistory"));
+const MigrateProducts = lazy(() => import("./pages/Admin/MigrateProducts"));
 
 function App() {
   return (
@@ -49,19 +49,76 @@ function App() {
 
 
   <Route
-    path="/admin"
-    element={
-      <ProtectedRoute>
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center">
+            Loading Admin...
+          </div>
+        }
+      >
         <AdminLayout />
-      </ProtectedRoute>
-    }
-  >
+      </Suspense>
+    </ProtectedRoute>
+  }
+>
     
-    <Route index element={<Dashboard />} />
-    <Route path="products" element={<Products />} />
-    <Route path="orders" element={<Orders />} />
-    <Route path="billing" element={<Billing />} />
-    <Route path="bill-history" element={<BillHistory />} />
+    <Route
+  index
+  element={
+    <Suspense fallback={<div>Loading...</div>}>
+      <Dashboard />
+    </Suspense>
+  }
+/>
+    <Route
+  path="products"
+  element={
+    <Suspense fallback={<div>Loading...</div>}>
+      <Products />
+    </Suspense>
+  }
+/>
+   <Route
+  path="orders"
+  element={
+    <Suspense fallback={<div>Loading...</div>}>
+      <Orders />
+    </Suspense>
+  }
+/>
+    <Route
+
+  path="billing"
+
+  element={
+
+    <Suspense fallback={<div>Loading...</div>}>
+
+      <Billing />
+
+    </Suspense>
+
+  }
+
+/>
+    <Route
+
+  path="bill-history"
+
+  element={
+
+    <Suspense fallback={<div>Loading...</div>}>
+
+      <BillHistory />
+
+    </Suspense>
+
+  }
+
+/>
   </Route>
 
   <Route path="/admin/login" element={<Login />} />

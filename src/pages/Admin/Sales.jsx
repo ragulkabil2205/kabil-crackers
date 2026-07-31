@@ -4,7 +4,7 @@ import { useOrders } from "../../context/OrdersContext";
 
 
 
-import * as XLSX from "xlsx";
+
 import { saveAs } from "file-saver";
 import RevenueCards from "../../components/admin/analytics/RevenueCards";
 import StatisticsCards from "../../components/admin/analytics/StatisticsCards";
@@ -18,7 +18,7 @@ import PaymentPieChart from "../../components/admin/analytics/PaymentPieChart";
 
 function Sales() {
   const { orders } = useOrders();
-  const [dateFilter, setDateFilter] = useState("today");
+  const [dateFilter, setDateFilter] = useState("all");
   const filteredOrders = orders.filter((order) => {
   if (!order.orderDate) return false;
 
@@ -26,6 +26,11 @@ function Sales() {
   const today = new Date();
 
   switch (dateFilter) {
+
+    case "all":
+  return true;
+
+
     case "today":
       return orderDate.toDateString() === today.toDateString();
 
@@ -68,13 +73,39 @@ console.log("First Order:", orders[0]);
 
   const today = new Date();
 
-  // Today's Revenue
- const totalRevenue = filteredOrders
-  .filter((order) => order.status === "Delivered")
+ // Today's / Weekly / Monthly Revenue
+const todayRevenue = filteredOrders
+  .filter((order) => {
+    if (order.status !== "Delivered") return false;
+    const d = new Date(order.orderDate);
+    return d.toDateString() === today.toDateString();
+  })
   .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
-  // Monthly Revenue
- const monthlyRevenue = totalRevenue;
+const weeklyRevenue = filteredOrders
+  .filter((order) => {
+    if (order.status !== "Delivered") return false;
+
+    const d = new Date(order.orderDate);
+    const last7 = new Date();
+    last7.setDate(today.getDate() - 6);
+
+    return d >= last7;
+  })
+  .reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+const monthlyRevenue = filteredOrders
+  .filter((order) => {
+    if (order.status !== "Delivered") return false;
+
+    const d = new Date(order.orderDate);
+
+    return (
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear()
+    );
+  })
+  .reduce((sum, order) => sum + Number(order.total || 0), 0);
     const totalOrders = filteredOrders.length;
 
 const pendingOrders = filteredOrders.filter(
@@ -139,7 +170,8 @@ const paymentData = [
     value: orders.filter((order) => order.payment === "Card").length,
   },
 ];
-const exportToExcel = () => {
+const exportToExcel = async () => {
+  const XLSX = await import("xlsx");
   const reportData = orders.map((order) => ({
     "Order ID": order.id,
     Customer: order.customer,
@@ -219,7 +251,6 @@ const topProducts = Object.entries(productSales)
   });
 
   // Weekly Revenue
-  const weeklyRevenue = totalRevenue;
 
   const monthNames = [
   "Jan",
@@ -264,6 +295,17 @@ filteredOrders.forEach((order) => {
             Weekly & Monthly Sales Overview
           </p>
 <div className="flex flex-wrap gap-3 mt-6">
+
+  <button
+  onClick={() => setDateFilter("all")}
+  className={`px-4 py-2 rounded-lg transition ${
+    dateFilter === "all"
+      ? "bg-blue-600 text-white"
+      : "bg-white border"
+  }`}
+>
+  All Time
+</button>
 
   <button
     onClick={() => setDateFilter("today")}
@@ -321,10 +363,10 @@ filteredOrders.forEach((order) => {
 
 </div>
 
-       <RevenueCards
-  todayRevenue={totalRevenue}
-  weeklyRevenue={totalRevenue}
-  monthlyRevenue={totalRevenue}
+     <RevenueCards
+  todayRevenue={todayRevenue}
+  weeklyRevenue={weeklyRevenue}
+  monthlyRevenue={monthlyRevenue}
 />
 
 <StatisticsCards
