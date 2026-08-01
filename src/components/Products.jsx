@@ -141,14 +141,11 @@ const { wishlistItems, addToWishlist } = useWishlist();
 </p>
 )}
 
-                  <p className="text-gray-400 line-through mt-3">
-                    {item.originalPrice > item.price && (
+{item.originalPrice > item.price && (
   <p className="text-gray-400 line-through mt-3">
     MRP ₹ {item.originalPrice}
   </p>
 )}
-                  </p>
-
                   <p className="text-lg md:text-2xl font-bold text-yellow-400">
                     Our Price ₹ {item.price}
                   </p>

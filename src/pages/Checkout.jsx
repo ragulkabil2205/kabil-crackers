@@ -6,6 +6,7 @@ import { useOrders } from "../context/OrdersContext";
 //import { useProducts } from "../context/ProductsContext";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { SHOP } from "../config/shopConfig";
 
 function Checkout() {
   const { cartItems, clearCart } = useCart();
@@ -26,7 +27,7 @@ const { addOrder } = useOrders();
 );
 
 const totalSaved = totalMRP - totalPrice;
-const gst = totalPrice * 0.05;
+const gst = totalPrice * 0.08;
 const packing = totalPrice * 0.03;
 const shipment = 100;
 const grandTotal = totalPrice + gst + packing + shipment;
@@ -81,7 +82,7 @@ console.log("Before Upload");
      
 
     const message = `
-🎆 *New Order - Kabil Crackers*
+🎆 *New Order - ${SHOP.name}*
 
 👤 Name: ${formData.name}
 
@@ -101,7 +102,7 @@ ${orderDetails}
 
 💰 Items Total: ₹${totalPrice}
 
-🧾 GST (5%): ₹${gst.toFixed(2)}
+🧾 GST (8%): ₹${gst.toFixed(2)}
 
 📦 Packing Charges (3%): ₹${packing.toFixed(2)}
 
@@ -109,6 +110,8 @@ ${orderDetails}
 
 💵 Grand Total: ₹${grandTotal.toFixed(2)}
 📷 Please attach your payment screenshot in this WhatsApp chat after sending this message.
+📞 Contact:
+${SHOP.phones[0]}
 
 Our team will verify your payment and confirm your order.
 
@@ -152,16 +155,18 @@ addOrder(order);
   //await reduceStock(item.id, item.quantity);
 //}
 
-    const whatsappUrl = `https://wa.me/918680002102?text=${encodeURIComponent(
-      message
-    )}`;
+    const whatsappUrl = `https://wa.me/${SHOP.whatsapp}?text=${encodeURIComponent(message)}`;
 
     window.location.href = whatsappUrl;
 
     clearCart();
 
     setTimeout(() => {
-      navigate("/success");
+      navigate("/success", {
+  state: {
+    order,
+  },
+});
     }, 500);
   };
 
@@ -377,7 +382,7 @@ addOrder(order);
 </div>
 
 <div className="flex justify-between mt-2">
-  <span>GST (5%)</span>
+  <span>GST (8%)</span>
   <span>₹ {Math.round(gst)}</span>
 </div>
 

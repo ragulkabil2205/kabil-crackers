@@ -15,6 +15,9 @@ import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 //import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import TrackOrder from "./pages/TrackOrder";
+import OrderDetails from "./pages/OrderDetails";
+
+
 const Dashboard = lazy(() => import("./pages/Admin/Dashboard"));
 const Products = lazy(() => import("./pages/Admin/Products"));
 const Orders = lazy(() => import("./pages/Admin/Orders"));
@@ -22,6 +25,7 @@ const Sales = lazy(() => import("./pages/Admin/Sales"));
 const Billing = lazy(() => import("./pages/Admin/Billing"));
 const BillHistory = lazy(() => import("./pages/Admin/BillHistory"));
 const MigrateProducts = lazy(() => import("./pages/Admin/MigrateProducts"));
+
 
 function App() {
   return (
@@ -37,6 +41,11 @@ function App() {
   <Route path="/success" element={<Success />} />
 
   <Route path="/track-order" element={<TrackOrder />} />
+
+  <Route
+  path="/order/:id"
+  element={<OrderDetails />}
+/>
 
   <Route
     path="/admin/sales"
@@ -118,7 +127,11 @@ function App() {
 
   }
 
+
 />
+
+
+
   </Route>
 
   <Route path="/admin/login" element={<Login />} />

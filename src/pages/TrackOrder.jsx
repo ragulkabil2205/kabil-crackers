@@ -162,7 +162,7 @@ const handleSearch = () => {
   </div>
 
   <div className="flex justify-between py-1">
-    <span>GST (5%)</span>
+    <span>GST (8%)</span>
     <span>₹ {Math.round(foundOrder.gst)}</span>
   </div>
 

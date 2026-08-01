@@ -78,7 +78,7 @@ export const downloadInvoice = (order) => {
     theme: "plain",
     body: [
       ["Items Total", `₹ ${Number(order.subtotal || 0).toLocaleString()}`],
-      ["GST (5%)", `₹ ${Number(order.gst || 0).toFixed(2)}`],
+      ["GST (8%)", `₹ ${Number(order.gst || 0).toFixed(2)}`],
       ["Packing Charges", `₹ ${Number(order.packing || 0).toFixed(2)}`],
       ["Shipment Charges", `₹ ${Number(order.shipment || 0).toLocaleString()}`],
       ["Grand Total", `₹ ${Number(order.total || 0).toFixed(2)}`],

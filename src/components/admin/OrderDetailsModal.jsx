@@ -188,7 +188,7 @@ function OrderDetailsModal({
     </div>
 
     <div className="flex justify-between">
-      <span>GST (5%)</span>
+      <span>GST (8%)</span>
       <span className="font-semibold">
         ₹ {Math.round(order.gst || 0).toLocaleString()}
       </span>
